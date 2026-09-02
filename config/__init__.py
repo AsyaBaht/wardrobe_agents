@@ -1,4 +1,7 @@
-"""Externalized configuration for wardrobe-agents."""
+"""Externalized configuration for wardrobe-agents.
+
+Author: Anastasiia Bakhtoiarova
+"""
 
 from config.settings import Settings, settings
 

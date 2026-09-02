@@ -29,6 +29,8 @@ over every pair in the closet - O(n^2), thousands of pairs, re-run for every
 purchase candidate - so it must be fast, free, and above all *stable*: the
 optimizer compares outfit counts before and after adding an item, and that
 comparison is meaningless if the scorer's answers drift between runs.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

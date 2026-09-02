@@ -20,6 +20,8 @@ rather than a unit of count.
 ``must_include`` is the hook the optimizer needs: outfits containing a specific
 item are exactly the outfits a candidate purchase would unlock, so the marginal
 gain of a candidate is computable without re-enumerating the whole closet.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

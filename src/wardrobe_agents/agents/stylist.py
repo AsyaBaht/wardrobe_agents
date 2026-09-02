@@ -15,6 +15,8 @@ with a documented fallback so the filter can never starve the stylist.
 
 This module deliberately knows nothing about the compatibility graph. Stage 1
 reasons about outfits; stage 2 counts them. They share the closet, not the code.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

@@ -1,5 +1,8 @@
 """Cataloguing: the manual path with no API at all, the photo path against a
-mocked Claude response. Both must land in the same schema."""
+mocked Claude response. Both must land in the same schema.
+
+Author: Anastasiia Bakhtoiarova
+"""
 
 from __future__ import annotations
 

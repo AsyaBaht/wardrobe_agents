@@ -7,6 +7,8 @@ without edits.
 
 The Claude API key is deliberately *not* a field: it is read from the
 environment by the Anthropic SDK at call time and never stored or logged.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

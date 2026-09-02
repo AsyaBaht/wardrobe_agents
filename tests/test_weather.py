@@ -1,5 +1,8 @@
 """Weather agent: deterministic parsing from a fixture, rule-derived constraints,
-and LLM translation only where a rule table would be lossy."""
+and LLM translation only where a rule table would be lossy.
+
+Author: Anastasiia Bakhtoiarova
+"""
 
 from __future__ import annotations
 

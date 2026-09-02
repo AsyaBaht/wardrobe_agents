@@ -16,6 +16,8 @@ unlike that idiom it composes with adaptive thinking on every platform.
 The API key is read from the environment by the SDK at call time (see
 ``Settings.api_key_env_var``); it is never stored on an object, written to a
 report, or included in an error message.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

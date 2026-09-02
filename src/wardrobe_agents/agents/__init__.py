@@ -1,4 +1,7 @@
-"""The three stage-1 agents, each implementing the :class:`Agent` protocol."""
+"""The three stage-1 agents, each implementing the :class:`Agent` protocol.
+
+Author: Anastasiia Bakhtoiarova
+"""
 
 from wardrobe_agents.agents.base import Agent, BaseAgent
 from wardrobe_agents.agents.cataloguing import CataloguingAgent, CatalogueRequest, CatalogueResult

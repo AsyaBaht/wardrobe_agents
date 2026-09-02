@@ -5,6 +5,8 @@ composes agents through this interface alone, so it never needs to know whether
 a given agent reasons with Claude, with a rule table, or with both - which is
 what lets the weather agent skip its LLM call on an unambiguous day, or lets a
 test swap in a stub, without the pipeline noticing.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

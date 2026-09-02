@@ -2,6 +2,8 @@
 
 Nothing in this package imports from :mod:`wardrobe_agents.agents`, and nothing in
 ``agents`` imports from here. Both read :class:`~wardrobe_agents.schemas.ClosetItem`.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from wardrobe_agents.compatibility.enumeration import (

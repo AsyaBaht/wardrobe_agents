@@ -15,6 +15,8 @@ The split is deliberate.
 
 So the agent works with no API key (returning ``source="rules"``), and spends a
 call only where the call earns its keep.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

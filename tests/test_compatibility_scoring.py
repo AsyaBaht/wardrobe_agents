@@ -1,5 +1,8 @@
 """Pairwise scoring: the three structural gates, the weighted components, and the
-graph that both stages read from."""
+graph that both stages read from.
+
+Author: Anastasiia Bakhtoiarova
+"""
 
 from __future__ import annotations
 

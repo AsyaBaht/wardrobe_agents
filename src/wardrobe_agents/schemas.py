@@ -11,6 +11,8 @@ Layering rule that keeps the two stages loosely coupled:
 Models whose names end in ``...Response`` / ``...Extraction`` are the exact shapes
 Claude is asked to return; they are validated by ``llm.py`` before anything else in
 the codebase sees them.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

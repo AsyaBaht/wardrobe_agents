@@ -1,5 +1,8 @@
 """Stylist agent: ranking and rationale plumbing against a mocked Claude response,
-and the guard that stops hallucinated items reaching a recommendation."""
+and the guard that stops hallucinated items reaching a recommendation.
+
+Author: Anastasiia Bakhtoiarova
+"""
 
 from __future__ import annotations
 

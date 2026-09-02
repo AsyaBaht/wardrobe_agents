@@ -10,6 +10,8 @@ distinction - counting distinct *looks*, not distinct item-sets.
 The fixture closet is built with a deliberate structural hole: a formal blouse
 and formal shoes that can never appear in an outfit together, because the closet
 has no bottom formal enough to join them.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

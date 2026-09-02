@@ -1,5 +1,8 @@
 """Outfit enumeration: the structural rules, the clique requirement, and the
-``must_include`` hook stage 2 depends on."""
+``must_include`` hook stage 2 depends on.
+
+Author: Anastasiia Bakhtoiarova
+"""
 
 from __future__ import annotations
 

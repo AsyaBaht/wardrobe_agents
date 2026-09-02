@@ -13,6 +13,8 @@ breaking the other.
 
 Both write a timestamped JSON report to ``reports/runs/`` so a run is an artifact
 you can diff, not just something that scrolled past in a terminal.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

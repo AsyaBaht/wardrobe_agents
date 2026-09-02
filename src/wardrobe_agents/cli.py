@@ -9,6 +9,8 @@ Subcommands map onto the two stages:
 
 Everything that reasons lives in the agents and the compatibility package; this
 module only parses arguments, resolves the closet, and formats output.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

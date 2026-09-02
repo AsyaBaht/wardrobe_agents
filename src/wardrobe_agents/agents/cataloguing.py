@@ -15,6 +15,8 @@ cannot collide with a real one.
 Confirmation is intentionally *not* done in this module. The agent returns
 drafts; presenting them and taking the user's edits is the CLI's job, which keeps
 the agent usable from a test or another caller.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

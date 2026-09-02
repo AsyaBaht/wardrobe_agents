@@ -1,5 +1,8 @@
 """The two pipelines, the run artifacts they write, and the loose coupling
-between the stages."""
+between the stages.
+
+Author: Anastasiia Bakhtoiarova
+"""
 
 from __future__ import annotations
 

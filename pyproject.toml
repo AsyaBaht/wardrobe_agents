@@ -9,7 +9,7 @@ description = "Agentic outfit recommendation and wardrobe purchase optimization 
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
-authors = [{ name = "Asya" }]
+authors = [{ name = "Anastasiia Bakhtoiarova" }]
 dependencies = [
     "anthropic>=1.0",
     "pydantic>=2.7",

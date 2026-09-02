@@ -23,6 +23,8 @@ This is a coverage problem, not a black box. For each candidate the optimizer:
 Every number in the resulting :class:`~wardrobe_agents.schemas.PurchaseRecommendation`
 traces back to enumerated outfits you can print, which is the point: the CLI can
 explain *why* something scores well.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

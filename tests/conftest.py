@@ -3,6 +3,8 @@
 No test in this suite makes a network call. Anything that would reach Claude goes
 through :class:`~wardrobe_agents.llm.FakeLLM`, and anything that would reach
 Open-Meteo goes through a saved forecast payload.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations

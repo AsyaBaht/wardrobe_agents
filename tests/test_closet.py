@@ -1,4 +1,7 @@
-"""The shared closet store: round-trips, identity, and the no-pollution rule."""
+"""The shared closet store: round-trips, identity, and the no-pollution rule.
+
+Author: Anastasiia Bakhtoiarova
+"""
 
 from __future__ import annotations
 

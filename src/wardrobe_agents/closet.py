@@ -11,6 +11,8 @@ whole closet, reason over all of it", which is a whole-file read either way.
 
 Derived data (the compatibility graph) is written to a *separate* file. Item
 records never carry computed fields; see :mod:`wardrobe_agents.schemas`.
+
+Author: Anastasiia Bakhtoiarova
 """
 
 from __future__ import annotations
