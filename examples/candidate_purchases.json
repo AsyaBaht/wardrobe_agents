@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "candidates": [
+    {
+      "candidate_id": "cand-001",
+      "category": "top",
+      "subcategory": "crewneck sweater",
+      "colors": ["cream"],
+      "pattern": "solid",
+      "fabric": "merino wool",
+      "warmth": 3,
+      "formality": 3,
+      "price": 120.0,
+      "url": null,
+      "notes": "Mid-weight neutral knit - the layer between a shirt and a coat."
+    },
+    {
+      "candidate_id": "cand-002",
+      "category": "bottom",
+      "subcategory": "straight jeans",
+      "colors": ["indigo"],
+      "pattern": "solid",
+      "fabric": "denim",
+      "warmth": 2,
+      "formality": 2,
+      "price": 90.0,
+      "url": null,
+      "notes": "A second pair of the jeans already in the closet."
+    },
+    {
+      "candidate_id": "cand-003",
+      "category": "bottom",
+      "subcategory": "wide-leg trousers",
+      "colors": ["burgundy"],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 3,
+      "formality": 4,
+      "price": 145.0,
+      "url": null,
+      "notes": "Colour in a slot that currently has none."
+    },
+    {
+      "candidate_id": "cand-004",
+      "category": "shoes",
+      "subcategory": "loafers",
+      "colors": ["brown"],
+      "pattern": "solid",
+      "fabric": "suede",
+      "warmth": 3,
+      "formality": 3,
+      "price": 180.0,
+      "url": null,
+      "notes": "Very close to the chelsea boots already owned."
+    },
+    {
+      "candidate_id": "cand-005",
+      "category": "top",
+      "subcategory": "camp collar shirt",
+      "colors": ["white"],
+      "pattern": "solid",
+      "fabric": "linen",
+      "warmth": 1,
+      "formality": 3,
+      "price": 85.0,
+      "url": null,
+      "notes": "Hot-weather cover for a closet that thins out above 25C."
+    },
+    {
+      "candidate_id": "cand-006",
+      "category": "outer",
+      "subcategory": "unstructured blazer",
+      "colors": ["navy"],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 3,
+      "formality": 4,
+      "price": 260.0,
+      "url": null,
+      "notes": "Dressy outer layer lighter than the overcoat."
+    },
+    {
+      "candidate_id": "cand-007",
+      "category": "accessory",
+      "subcategory": "silk scarf",
+      "colors": ["mustard"],
+      "pattern": "print",
+      "fabric": "silk",
+      "warmth": 1,
+      "formality": 3,
+      "price": 65.0,
+      "url": null,
+      "notes": "Included to show how accessories are handled."
+    }
+  ]
+}

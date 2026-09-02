@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+.idea/
+.vscode/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local wardrobe state: the working closet + derived compatibility cache.
+# The committed seed lives in examples/seed_closet/closet.json instead.
+/data/
+*.local.json
+
+# Run artifacts are generated; keep the directory, not its contents.
+reports/runs/*
+!reports/runs/.gitkeep
+
+.DS_Store
+.env

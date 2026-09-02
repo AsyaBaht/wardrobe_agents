@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wardrobe-agents"
+version = "0.1.0"
+description = "Agentic outfit recommendation and wardrobe purchase optimization over a single cataloged closet."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Asya" }]
+dependencies = [
+    "anthropic>=1.0",
+    "pydantic>=2.7",
+    "typer>=0.12",
+]
+
+[project.optional-dependencies]
+yaml = ["PyYAML>=6.0"]
+dev = ["pytest>=8.0", "PyYAML>=6.0"]
+
+[project.scripts]
+wardrobe = "wardrobe_agents.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src", "."]
+include = ["wardrobe_agents*", "config*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+filterwarnings = ["error::DeprecationWarning:wardrobe_agents.*"]
