@@ -1,0 +1,118 @@
+# Stage 1 — the stylist — evaluated with agent-eval.
+#
+#   agent-eval validate evals/recommend.yaml             # free: checks this file
+#   agent-eval run evals/recommend.yaml --no-judge       # stylist calls only
+#   agent-eval run evals/recommend.yaml --set-baseline   # pin a run to compare against
+#   agent-eval run evals/recommend.yaml --compare        # gate a change on it
+#
+# Each case hands run_recommend a fixed forecast (`constraints`), so the
+# weather agent and its network calls are skipped: what's measured is the
+# stylist, on the seed closet, under conditions that are the same every run.
+# One model call per case, plus one per judge sample.
+#
+# The stylist's answer varies from call to call. Raise `trials` (or pass
+# --trials) to measure that; a comparison is then made on per-case means.
+
+suite: wardrobe-recommend
+description: Stylist over the seed closet with fixed forecasts. One model call per case.
+
+target:
+  path: [../src, ..]
+  call: wardrobe_agents.orchestrator:run_recommend
+  uses_llm: true
+  args:
+    closet:
+      factory: wardrobe_agents.closet:Closet.load
+      arg: {path: ../examples/seed_closet/closet.json}
+    constraints: input.constraints
+    occasion: input.occasion
+    target_formality: input.target_formality
+    count: input.count
+  fixed_args:
+    write_report: false        # agent-eval writes the report; the agent shouldn't
+
+cases: cases/recommend.jsonl
+
+trials: 1
+
+scorers:
+  - type: schema
+    model: wardrobe_agents.orchestrator:Stage1Result
+
+  - type: numeric_bound
+    name: suggestion_count
+    values: "[length(output.suggestions)]"
+    minimum: 1
+    maximum: input.count
+
+  - type: sequence_integrity
+    name: ranks_contiguous
+    values: output.suggestions[*].rank
+    label: ranks
+
+  # One top and one bottom, or one dress; never both, never two.
+  - type: empty_collection
+    name: complete_outfits
+    items: >-
+      output.suggestions[?!(
+        (length(items[?category=='top']) == `1` && length(items[?category=='bottom']) == `1` && length(items[?category=='dress']) == `0`)
+        ||
+        (length(items[?category=='dress']) == `1` && length(items[?category=='top']) == `0` && length(items[?category=='bottom']) == `0`)
+      )].name
+    label: outfits that aren't a top and bottom or a dress
+
+  - type: empty_collection
+    name: one_of_each_layer
+    items: "output.suggestions[?length(items[?category=='shoes']) > `1` || length(items[?category=='outer']) > `1`].name"
+    label: outfits with two pairs of shoes or two outer layers
+
+  # The resolved items are the ids the stylist named, nothing added or lost.
+  - type: predicate
+    name: items_match_ids
+    that: "output.suggestions[*].sort(item_ids) == output.suggestions[*].sort(items[*].id)"
+    fail_detail: a suggestion's items are not the ids it lists
+
+  - type: no_duplicates
+    name: no_repeated_outfits
+    items: "output.suggestions[*].join(',', sort(item_ids))"
+    label: outfits
+
+  # Every piece within one step of the forecast's warmth window — the same
+  # tolerance the stylist's own pre-filter applies. Graded: one piece out of
+  # range is a smaller problem than a whole outfit.
+  - type: numeric_bound
+    name: warmth_fits_forecast
+    values: output.suggestions[*].items[].warmth
+    minimum: input.constraints.min_warmth
+    maximum: input.constraints.max_warmth
+    tolerance: 1
+    graded: true
+
+  # Within one step of the formality asked for. No target, no bound.
+  - type: numeric_bound
+    name: formality_near_target
+    values: output.suggestions[*].formality
+    minimum: input.target_formality
+    maximum: input.target_formality
+    tolerance: 1
+    graded: true
+
+  - type: judge
+    name: occasion_fit
+    rubric_file: rubrics/occasion_fit.md
+    threshold: 0.7
+    samples: 1
+    output: &shown >-
+      output.suggestions[*].{
+        name: name,
+        items: items[*].{id: id, what: subcategory, colors: colors, fabric: fabric, warmth: warmth, formality: formality, tags: tags},
+        rationale: rationale,
+        weather_fit: weather_fit
+      }
+
+  - type: judge
+    name: rationale_grounded
+    rubric_file: rubrics/rationale_grounded.md
+    threshold: 0.7
+    samples: 1
+    output: *shown

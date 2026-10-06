@@ -1,0 +1,66 @@
+# Stage 2 — the purchase optimizer — evaluated with agent-eval.
+#
+#   agent-eval run evals/suggest_buy.yaml --set-baseline
+#   agent-eval run evals/suggest_buy.yaml --compare
+#
+# No model, no network, no API key: this pipeline is scoring, enumeration and
+# optimization in code. That makes it deterministic, so one trial is enough
+# and any change in a score is a change in the code or the data.
+#
+# Every case uses the seed closet and varies the candidates on offer.
+
+suite: wardrobe-suggest-buy
+description: Purchase optimizer over the seed closet. Deterministic, runs offline.
+
+target:
+  path: [../src, ..]
+  call: wardrobe_agents.orchestrator:run_suggest_buy
+  args:
+    closet:
+      factory: wardrobe_agents.closet:Closet.load
+      arg: {path: ../examples/seed_closet/closet.json}
+    candidates: input.candidates
+  fixed_args:
+    write_report: false        # agent-eval writes the report; the agent shouldn't
+
+cases: cases/suggest_buy.jsonl
+
+scorers:
+  # Every candidate offered comes back ranked, exactly once.
+  - type: set_coverage
+    name: every_candidate_ranked
+    required: input.candidates[*].candidate_id
+    actual: output.optimization.recommendations[*].candidate.candidate_id
+
+  - type: no_duplicates
+    name: no_candidate_ranked_twice
+    items: output.optimization.recommendations[*].candidate.candidate_id
+    label: ranked candidates
+
+  - type: sequence_integrity
+    name: ranks_contiguous
+    values: output.optimization.recommendations[*].rank
+    label: ranks
+
+  # The ranking is the product: the best marginal gain has to come first.
+  - type: predicate
+    name: ranked_by_marginal_gain
+    that: "output.optimization.recommendations[*].new_outfit_count == reverse(sort(output.optimization.recommendations[*].new_outfit_count))"
+    fail_detail: recommendations are not in descending order of new outfits unlocked
+
+  # A candidate can't unlock more distinct looks than raw combinations.
+  - type: empty_collection
+    name: looks_never_exceed_combinations
+    items: "output.optimization.recommendations[?new_combination_count < new_outfit_count].candidate.candidate_id"
+    label: candidates with more looks than combinations
+
+  - type: numeric_bound
+    name: gains_non_negative
+    values: output.optimization.recommendations[*].new_outfit_count
+    minimum: 0
+
+  # Every recommendation in a run is measured against the same closet.
+  - type: predicate
+    name: one_baseline_per_run
+    that: "min(output.optimization.recommendations[*].baseline_outfit_count) == max(output.optimization.recommendations[*].baseline_outfit_count)"
+    fail_detail: recommendations in one run disagree about the baseline outfit count
