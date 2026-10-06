@@ -245,6 +245,64 @@ def test_surplus_outfits_are_trimmed_to_the_requested_count(seed_closet, constra
     assert [s.name for s in result.suggestions] == ["One"]
 
 
+def test_an_inverted_warmth_window_is_rejected(constraints):
+    with pytest.raises(ValueError, match="min_warmth"):
+        WeatherConstraints.model_validate(
+            {**constraints.model_dump(), "min_warmth": 4, "max_warmth": 2}
+        )
+    with pytest.raises(ValueError, match="temp_min_c"):
+        WeatherConstraints.model_validate(
+            {**constraints.model_dump(), "temp_min_c": 20.0, "temp_max_c": 5.0}
+        )
+
+
+def _rainy(constraints: WeatherConstraints) -> WeatherConstraints:
+    return constraints.model_copy(update={"needs_waterproof_outer": True})
+
+
+def test_a_waterproof_need_the_closet_cannot_meet_is_a_warning(seed_closet, constraints):
+    """The seed closet tags nothing waterproof, so the constraint is unanswerable."""
+    llm = FakeLLM([_response(_pick("Real", ["top-001", "bottom-003", "outer-002"]))])
+    result = StylistAgent(llm=llm).run(
+        StylistRequest(items=seed_closet.wearable(), constraints=_rainy(constraints), count=1)
+    )
+
+    assert len(result.suggestions) == 1
+    assert "no outer item is tagged 'waterproof'" in result.warnings[0]
+
+
+def test_an_outfit_without_the_waterproof_layer_is_flagged(make_item, constraints):
+    items = [
+        make_item("top-001", "top"),
+        make_item("bottom-001", "bottom"),
+        make_item("outer-001", "outer", tags=["Waterproof"]),
+        make_item("outer-002", "outer"),
+    ]
+    llm = FakeLLM(
+        [
+            _response(
+                _pick("Shell", ["top-001", "bottom-001", "outer-001"]),
+                _pick("Denim", ["top-001", "bottom-001", "outer-002"]),
+            )
+        ]
+    )
+    result = StylistAgent(llm=llm).run(
+        StylistRequest(items=items, constraints=_rainy(constraints), count=2)
+    )
+
+    assert [s.name for s in result.suggestions] == ["Shell", "Denim"], "flagged, not dropped"
+    assert result.warnings == ["Outfit 'Denim' has no waterproof outer layer."]
+    assert "tags: Waterproof" in llm.calls[0].content, "the model can see which item qualifies"
+
+
+def test_no_protection_warnings_on_a_dry_day(seed_closet, constraints):
+    llm = FakeLLM([_response(_pick("Real", ["top-001", "bottom-003"]))])
+    result = StylistAgent(llm=llm).run(
+        StylistRequest(items=seed_closet.wearable(), constraints=constraints, count=1)
+    )
+    assert result.warnings == []
+
+
 def test_duplicate_ids_within_one_outfit_are_collapsed(seed_closet, constraints):
     llm = FakeLLM([_response(_pick("Doubled", ["top-001", "top-001", "bottom-003"]))])
     result = StylistAgent(llm=llm).run(

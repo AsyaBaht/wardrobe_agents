@@ -176,6 +176,33 @@ def test_translation_shifts_the_warmth_window_within_bounds(forecast, translatio
     assert folded.avoid_fabrics == ["linen"]
 
 
+def test_the_model_cannot_switch_off_a_decisive_rain_or_wind_rule(forecast_payload, translation):
+    """A 90% rain, 40 kph day is 'ambiguous' only because of its swing; the model's
+    answer to the layering question must not undo the rain and wind rules."""
+    forecast_payload["daily"]["precipitation_probability_max"] = [90]
+    forecast_payload["daily"]["precipitation_sum"] = [8.0]
+    forecast_payload["daily"]["wind_speed_10m_max"] = [40.0]
+    base = derive_base_constraints(parse_forecast(forecast_payload, location="Berlin", on=WHEN))
+    assert base.needs_waterproof_outer and base.needs_windproof
+
+    dry_and_calm = translation.model_copy(
+        update={"needs_waterproof_outer": False, "needs_windproof": False}
+    )
+    folded = apply_translation(base, dry_and_calm)
+
+    assert folded.needs_waterproof_outer
+    assert folded.needs_windproof
+
+
+def test_the_model_still_decides_borderline_rain(forecast_payload, translation):
+    """65% is inside the judgment zone: umbrella-or-shell is the model's call."""
+    forecast_payload["daily"]["precipitation_probability_max"] = [65]
+    base = derive_base_constraints(parse_forecast(forecast_payload, location="Berlin", on=WHEN))
+    assert base.needs_waterproof_outer
+
+    assert not apply_translation(base, translation).needs_waterproof_outer
+
+
 def test_warmth_window_is_clamped_to_the_scale(forecast, translation):
     base = derive_base_constraints(forecast).model_copy(update={"min_warmth": 5, "max_warmth": 5})
     folded = apply_translation(base, translation)

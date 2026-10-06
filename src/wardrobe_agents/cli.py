@@ -31,6 +31,7 @@ from wardrobe_agents.agents.cataloguing import (
     CataloguingError,
     ItemDraft,
 )
+from wardrobe_agents.agents.stylist import StylistError
 from wardrobe_agents.agents.weather import WeatherError
 from wardrobe_agents.closet import Closet, ClosetError
 from wardrobe_agents.compatibility.enumeration import enumerate_outfits
@@ -432,6 +433,8 @@ def recommend(
     if temp_min is not None or temp_max is not None:
         if temp_min is None or temp_max is None:
             _err("Pass both --temp-min and --temp-max to skip the forecast.")
+        if temp_min > temp_max:
+            _err(f"--temp-min ({temp_min:g}) is above --temp-max ({temp_max:g}).")
         manual = _manual_constraints(temp_min, temp_max, conditions, location, on)
     elif not location:
         _err("Pass --location to fetch a forecast, or --temp-min/--temp-max to skip it.")
@@ -451,7 +454,7 @@ def recommend(
         _err(
             f"{exc}\n\nStage 2 (`wardrobe score`, `wardrobe suggest-buy`) runs without a key."
         )
-    except (WeatherError, LLMError, ValueError) as exc:
+    except (WeatherError, StylistError, LLMError, ValueError) as exc:
         _err(str(exc))
 
     if as_json and result.report is not None:

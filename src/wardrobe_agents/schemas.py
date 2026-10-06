@@ -21,7 +21,7 @@ from datetime import date, datetime
 from enum import Enum
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 # --------------------------------------------------------------------------- #
 # Scales
@@ -123,6 +123,11 @@ class ClosetItem(BaseModel):
     def _normalize_text(cls, v: str) -> str:
         return v.strip().lower()
 
+    def has_tag(self, tag: str) -> bool:
+        """Case-insensitive tag lookup. Weather protection is recorded as the tags
+        ``waterproof`` / ``windproof``."""
+        return tag.lower() in {t.strip().lower() for t in self.tags}
+
     @property
     def label(self) -> str:
         """Short human description used in prompts, CLI output, and explanations."""
@@ -203,6 +208,20 @@ class WeatherConstraints(BaseModel):
     layering_advice: str = ""
     notes: str = ""
     source: Literal["rules", "rules+llm", "manual"] = "rules"
+
+    @model_validator(mode="after")
+    def _ranges_are_ordered(self) -> "WeatherConstraints":
+        # An inverted window matches no item, which the stylist's pre-filter would
+        # quietly paper over by sending the whole closet.
+        if self.temp_min_c > self.temp_max_c:
+            raise ValueError(
+                f"temp_min_c ({self.temp_min_c}) is above temp_max_c ({self.temp_max_c})."
+            )
+        if self.min_warmth > self.max_warmth:
+            raise ValueError(
+                f"min_warmth ({self.min_warmth}) is above max_warmth ({self.max_warmth})."
+            )
+        return self
 
     def summary(self) -> str:
         return (

@@ -26,7 +26,7 @@ Verify the install without spending a token — stage 2 needs no key, no network
 ```bash
 wardrobe suggest-buy            # falls back to the bundled 15-item seed closet
 wardrobe outfits                # every valid outfit that closet supports
-pytest                          # 160 tests, none of which touch the network
+pytest                          # 168 tests, none of which touch the network
 ```
 
 To start your own closet from the seed:
@@ -85,7 +85,7 @@ forks it.
 | `formality` | 1–5: loungewear → formal |
 | `condition` | `new` … `retire`; retired items are excluded from recommendation and enumeration |
 | `date_added`, `last_worn` | `last_worn` is the one mutable field, updated when an outfit is worn |
-| `notes`, `tags`, `source`, `photo_path` | provenance and free-form context |
+| `notes`, `tags`, `source`, `photo_path` | provenance and free-form context; the tags `waterproof` / `windproof` are what the stylist checks against a wet or windy forecast |
 
 ### Why JSON, not SQLite
 
@@ -145,7 +145,9 @@ before anything is saved. Photo batches run concurrently, bounded by
 - *LLM* — **only when the day is ambiguous.** A dry 26 °C day needs no reasoning and gets no API
   call. "Scattered showers, 15 kph wind, 11 °C swing" is exactly where a lookup table throws away
   the judgment — umbrella day, or waterproof-shell day? — so Claude answers only those questions,
-  into a typed `WeatherTranslation`. If that call fails, the rules stand on their own.
+  into a typed `WeatherTranslation`. If that call fails, the rules stand on their own. Where
+  the rules were already decisive (rain above 70% or 3 mm, wind at 35 kph), the model cannot
+  switch the flag off.
 
 **Stylist agent.** The genuinely LLM-backed step, and the one that is *not* template-driven. It
 gets the eligible closet and the constraints, and reasons about colour relationships, layering,
@@ -154,7 +156,9 @@ boundary instead: picks referencing ids that were never sent are dropped rather 
 hallucinated into a recommendation, as are picks that break the outfit structure (two tops, no
 bottom, two outer layers). A drop that leaves the answer short triggers one retry
 (`stylist_max_retries`) that tells the model what was rejected, and every drop is kept as a
-warning in the run report. If every pick is invalid it raises rather than returning
+warning in the run report. When the forecast needs a waterproof or windproof layer, outfits
+without an outer item tagged that way are flagged (not dropped - an umbrella is a fair answer),
+and so is a closet with no such item at all. If every pick is invalid it raises rather than returning
 something plausible-looking.
 
 ---
@@ -279,7 +283,7 @@ src/wardrobe_agents/
   cli.py                            typer CLI
 examples/seed_closet/closet.json    15 items, runs both stages with zero setup
 examples/candidate_purchases.json   7 candidates, including two deliberate duplicates
-tests/                              160 tests, no network
+tests/                              168 tests, no network
 reports/runs/                       timestamped run artifacts
 ```
 

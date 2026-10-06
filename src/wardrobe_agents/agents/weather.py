@@ -305,14 +305,23 @@ def is_ambiguous(forecast: DailyForecast) -> bool:
 def apply_translation(
     constraints: WeatherConstraints, translation: WeatherTranslation
 ) -> WeatherConstraints:
-    """Fold Claude's judgment into the rule-derived constraints."""
+    """Fold Claude's judgment into the rule-derived constraints.
+
+    The model decides the maybe-cases. Where the rules were decisive - rain or
+    wind beyond the ambiguous zone in :func:`is_ambiguous` - their answer stands,
+    because the call may have been triggered by something else entirely (a 90%
+    rain day is still "ambiguous" if it is also breezy).
+    """
     shift = translation.warmth_adjustment
+    rain_is_decisive = constraints.needs_waterproof_outer and (
+        constraints.precipitation_probability_pct > 70 or constraints.precipitation_mm >= 3.0
+    )
     return constraints.model_copy(
         update={
             "min_warmth": max(0, min(5, constraints.min_warmth + shift)),
             "max_warmth": max(0, min(5, constraints.max_warmth + shift)),
-            "needs_waterproof_outer": translation.needs_waterproof_outer,
-            "needs_windproof": translation.needs_windproof,
+            "needs_waterproof_outer": rain_is_decisive or translation.needs_waterproof_outer,
+            "needs_windproof": constraints.needs_windproof or translation.needs_windproof,
             "prefer_fabrics": translation.prefer_fabrics or constraints.prefer_fabrics,
             "avoid_fabrics": translation.avoid_fabrics,
             "layering_advice": translation.layering_advice or constraints.layering_advice,

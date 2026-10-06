@@ -11,7 +11,8 @@ What it does do is guard the boundary. The model may only reference ids that wer
 actually sent; picks referencing anything else are dropped rather than
 hallucinated into a recommendation. So are picks that are not an outfit at all
 (two tops, no bottom, two coats): the prompt states those rules, but only this
-module enforces them. When a drop leaves the answer short, the stylist is asked
+module enforces them. The weather agent's waterproof/windproof flags are checked
+against item tags and reported as warnings when unmet. When a drop leaves the answer short, the stylist is asked
 again for replacements, told what was rejected and why. Deterministic pre-filtering (retired items,
 wildly out-of-season pieces) happens before the call to keep the prompt focused,
 with a documented fallback so the filter can never starve the stylist.
@@ -146,6 +147,39 @@ def structure_problem(items: Sequence[ClosetItem]) -> str | None:
     return None
 
 
+def protection_warnings(
+    suggestions: Sequence[OutfitSuggestion],
+    eligible: Sequence[ClosetItem],
+    constraints: WeatherConstraints,
+) -> list[str]:
+    """Check the weather agent's protection flags against what the closet records.
+
+    Protection lives in item tags (``waterproof`` / ``windproof``). These are
+    warnings, not drops: an umbrella is a legitimate answer to rain, but a
+    constraint nothing in the closet can meet should never pass silently.
+    """
+    warnings: list[str] = []
+    needed = [
+        tag
+        for tag, flag in (
+            ("waterproof", constraints.needs_waterproof_outer),
+            ("windproof", constraints.needs_windproof),
+        )
+        if flag
+    ]
+    for tag in needed:
+        if not any(i.category == Category.OUTER and i.has_tag(tag) for i in eligible):
+            warnings.append(
+                f"The forecast calls for a {tag} outer layer, but no outer item is tagged "
+                f"{tag!r} - tag one in the closet if you own it."
+            )
+            continue
+        for suggestion in suggestions:
+            if not any(i.category == Category.OUTER and i.has_tag(tag) for i in suggestion.items):
+                warnings.append(f"Outfit {suggestion.name!r} has no {tag} outer layer.")
+    return warnings
+
+
 class StylistAgent(BaseAgent[StylistRequest, StylistResult]):
     """Closet + constraints -> ranked :class:`OutfitSuggestion` list."""
 
@@ -203,6 +237,7 @@ class StylistAgent(BaseAgent[StylistRequest, StylistResult]):
                 "The stylist returned no usable outfits - every suggestion referenced items "
                 "that are not in the closet or was not a valid outfit. " + " ".join(result.warnings)
             )
+        result.warnings.extend(protection_warnings(result.suggestions, eligible, payload.constraints))
         return result
 
     # ---- prompt ---------------------------------------------------------
@@ -218,9 +253,9 @@ class StylistAgent(BaseAgent[StylistRequest, StylistResult]):
         if c.layering_advice:
             lines.append(f"Layering: {c.layering_advice}")
         if c.needs_waterproof_outer:
-            lines.append("A waterproof outer layer is needed.")
+            lines.append("A waterproof outer layer is needed (items tagged 'waterproof').")
         if c.needs_windproof:
-            lines.append("Wind is a factor; a windproof layer helps.")
+            lines.append("Wind is a factor; a windproof layer helps (items tagged 'windproof').")
         if c.prefer_fabrics:
             lines.append(f"Fabrics that suit today: {', '.join(c.prefer_fabrics)}.")
         if c.avoid_fabrics:
@@ -248,7 +283,10 @@ class StylistAgent(BaseAgent[StylistRequest, StylistResult]):
             for item in group:
                 worn = f", last worn {item.last_worn.isoformat()}" if item.last_worn else ", never worn"
                 note = f" ({item.notes})" if item.notes else ""
-                lines.append(f"- {item.describe()} | condition {item.condition.value}{worn}{note}")
+                tags = f" | tags: {', '.join(item.tags)}" if item.tags else ""
+                lines.append(
+                    f"- {item.describe()} | condition {item.condition.value}{worn}{tags}{note}"
+                )
 
         lines.append("")
         lines.append(f"Return {count} ranked outfits, best first.")
