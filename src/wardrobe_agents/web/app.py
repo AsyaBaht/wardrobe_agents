@@ -20,7 +20,7 @@ from typing import Any
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from config.settings import Settings, settings as default_settings
 from wardrobe_agents.agents.cataloguing import CataloguingAgent, CataloguingError
@@ -76,6 +76,24 @@ class ItemBody(BaseModel):
     """Name returned by ``/api/extract`` for the photo this item came from."""
 
 
+class ItemEditBody(BaseModel):
+    """The attributes a user may change on an existing item. Identity and
+    provenance (``id``, ``category``, ``date_added``, ``source``, the photo) are
+    not editable: the id encodes the category, and the rest are facts."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    subcategory: str
+    colors: list[str]
+    pattern: str
+    fabric: str
+    warmth: int
+    formality: int
+    condition: str
+    notes: str | None = None
+    tags: list[str] = Field(default_factory=list)
+
+
 class WornBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -120,6 +138,11 @@ def create_app(settings: Settings | None = None, llm: StructuredLLM | None = Non
         """Always to the working path, never back into the bundled seed: the first
         successful write is what turns the seed into the user's own closet."""
         closet.save(Path(settings.closet_path))
+
+    def drop_compatibility_cache() -> None:
+        """The cache is keyed by item ids, so it cannot tell that an item's
+        attributes changed underneath it. It is derived data; stage 2 rebuilds it."""
+        Path(settings.compatibility_cache_path).unlink(missing_ok=True)
 
     @app.get("/", include_in_schema=False)
     def index() -> FileResponse:
@@ -260,6 +283,43 @@ def create_app(settings: Settings | None = None, llm: StructuredLLM | None = Non
             except (CataloguingError, ClosetError) as exc:
                 raise HTTPException(400, str(exc)) from exc
         return {"item": _item_json(item)}
+
+    @app.put("/api/items/{item_id}")
+    def edit_item(item_id: str, body: ItemEditBody) -> dict[str, Any]:
+        with write_lock:
+            closet, _ = load_closet()
+            current = closet.find(item_id)
+            if current is None:
+                raise HTTPException(404, f"No item with id {item_id!r}.")
+            try:
+                updated = ClosetItem.model_validate(
+                    {**current.model_dump(mode="json"), **body.model_dump()}
+                )
+            except ValidationError as exc:
+                problems = "; ".join(
+                    f"{'.'.join(str(p) for p in e['loc'])}: {e['msg']}" for e in exc.errors()
+                )
+                raise HTTPException(400, f"Invalid item: {problems}") from exc
+            closet.add(updated, overwrite=True)
+            save(closet)
+            drop_compatibility_cache()
+        return {"item": _item_json(updated)}
+
+    @app.delete("/api/items/{item_id}")
+    def delete_item(item_id: str) -> dict[str, Any]:
+        with write_lock:
+            closet, _ = load_closet()
+            try:
+                removed = closet.remove(item_id)
+            except ClosetError as exc:
+                raise HTTPException(404, str(exc)) from exc
+            save(closet)
+            # Only photos this UI stored are removed with their item; a path the
+            # user supplied through the CLI is theirs.
+            photo = _photo_file(removed)
+            if photo is not None and photo.parent.resolve() == photos_dir.resolve():
+                photo.unlink(missing_ok=True)
+        return {"deleted": removed.id}
 
     @app.post("/api/worn")
     def mark_worn(body: WornBody) -> dict[str, Any]:

@@ -26,7 +26,7 @@ Verify the install without spending a token — stage 2 needs no key, no network
 ```bash
 wardrobe suggest-buy            # falls back to the bundled 15-item seed closet
 wardrobe outfits                # every valid outfit that closet supports
-pytest                          # 184 tests, none of which touch the network
+pytest                          # 192 tests, none of which touch the network
 ```
 
 To start your own closet from the seed:
@@ -87,7 +87,7 @@ reachable only from the computer itself.
 | tab | what it does |
 | --- | --- |
 | **Today** | location (or temperatures you type in), date, occasion, formality → ranked outfits with item photos, the reasoning, and any warnings. *I wore this* updates `last_worn`. |
-| **Closet** | every item by category, with its photo when it has one. |
+| **Closet** | every item by category, with its photo when it has one. Tap an item to edit its attributes or delete it; the category is fixed, because the id encodes it. |
 | **Add** | take a photo → Claude reads the attributes → you check or edit them, with uncertain fields highlighted → save. Or fill the form by hand, which needs no API key. |
 
 Things to know:
@@ -447,7 +447,7 @@ src/wardrobe_agents/
   web/static/index.html             the single mobile page - no build step, no external assets
 examples/seed_closet/closet.json    15 items, runs both stages with zero setup
 examples/candidate_purchases.json   7 candidates, including two deliberate duplicates
-tests/                              184 tests, no network
+tests/                              192 tests, no network
 reports/runs/                       timestamped run artifacts
 ```
 

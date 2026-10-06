@@ -47,6 +47,10 @@ button {
   min-height: 46px; background: var(--accent); color: var(--accent-ink); width: 100%; margin-top: 14px;
 }
 button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+button.danger { background: transparent; color: var(--err-ink); border: 1px solid var(--line); }
+.item.tap { cursor: pointer; border-radius: 10px; }
+.item.tap:active { background: var(--thumb); }
+.item .chev { margin-left: auto; color: var(--muted); padding: 0 4px; }
 button.link { background: none; color: var(--accent); width: auto; padding: 6px 0; min-height: 0; margin-top: 8px; font-weight: 500; }
 button:disabled { opacity: 0.55; }
 .notice { border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; font-size: 14px; }
@@ -114,13 +118,15 @@ nav button[aria-selected="true"] { color: var(--accent); font-weight: 700; }
   <!-- Closet -->
   <section id="tab-closet" class="hidden">
     <h1>Closet</h1>
+    <p class="muted">Tap an item to edit or delete it.</p>
+    <div id="closet-msg"></div>
     <div id="closet-status"></div>
     <div id="closet-out"></div>
   </section>
 
   <!-- Add -->
   <section id="tab-add" class="hidden">
-    <h1>Add an item</h1>
+    <h1 id="add-title">Add an item</h1>
     <div class="card" id="add-start">
       <p class="muted">Take a photo of one garment. Its details are read for you to check before anything is saved.</p>
       <input id="photo" type="file" accept="image/*" class="hidden">
@@ -155,6 +161,7 @@ nav button[aria-selected="true"] { color: var(--accent); font-weight: 700; }
       <label for="f-notes">Notes</label>
       <textarea id="f-notes"></textarea>
       <button id="save-item">Save to closet</button>
+      <button type="button" class="danger hidden" id="delete-item">Delete item</button>
       <button type="button" class="secondary" id="cancel-item">Cancel</button>
     </form>
   </section>
@@ -234,20 +241,35 @@ function itemRow(item, detailed) {
     parts.push(item.last_worn ? `worn ${item.last_worn}` : "never worn");
     if (item.tags.length) parts.push(item.tags.join(", "));
   }
-  return el("div", { class: "item" }, thumb(item),
+  const row = el("div", { class: "item" }, thumb(item),
     el("div", {}, el("div", { class: "name", text: item.label }), el("div", { class: "meta", text: parts.join(" · ") })));
+  if (detailed) {
+    row.classList.add("tap");
+    row.setAttribute("role", "button");
+    row.setAttribute("tabindex", "0");
+    row.setAttribute("aria-label", `Edit ${item.label}`);
+    row.append(el("span", { class: "chev", text: "›" }));
+    row.addEventListener("click", () => startEdit(item));
+    row.addEventListener("keydown", (event) => { if (event.key === "Enter") startEdit(item); });
+  }
+  return row;
 }
 
 // ---- tabs ---------------------------------------------------------------
+function selectTab(name) {
+  for (const button of document.querySelectorAll("nav button")) {
+    const active = button.dataset.tab === name;
+    button.setAttribute("aria-selected", String(active));
+    $(`tab-${button.dataset.tab}`).classList.toggle("hidden", !active);
+  }
+  if (name === "closet") loadCloset();
+  window.scrollTo(0, 0);
+}
 for (const button of document.querySelectorAll("nav button")) {
   button.addEventListener("click", () => {
-    for (const other of document.querySelectorAll("nav button")) {
-      const active = other === button;
-      other.setAttribute("aria-selected", String(active));
-      $(`tab-${other.dataset.tab}`).classList.toggle("hidden", !active);
-    }
-    if (button.dataset.tab === "closet") loadCloset();
-    window.scrollTo(0, 0);
+    if (editing) resetAdd();  // leaving an edit by the tab bar abandons it
+    notice($("closet-msg"), "warn", []);
+    selectTab(button.dataset.tab);
   });
 }
 
@@ -358,6 +380,7 @@ async function loadCloset() {
 
 // ---- add ----------------------------------------------------------------
 let upload = null;
+let editing = null;  // the closet item being edited, or null when adding
 const FIELDS = ["category", "subcategory", "colors", "pattern", "fabric", "warmth", "formality", "condition", "notes"];
 
 function showForm(item, unsure, confidence) {
@@ -367,7 +390,7 @@ function showForm(item, unsure, confidence) {
     input.value = Array.isArray(value) ? value.join(", ") : (value ?? "");
     input.classList.toggle("unsure", unsure.includes(name));
   }
-  $("f-tags").value = "";
+  $("f-tags").value = (item.tags || []).join(", ");
   $("confidence").textContent = confidence == null ? "" :
     `Read from the photo with ${Math.round(confidence * 100)}% confidence.` +
     (unsure.length ? ` Check the highlighted field${unsure.length > 1 ? "s" : ""}.` : "");
@@ -375,8 +398,35 @@ function showForm(item, unsure, confidence) {
   $("add-start").classList.add("hidden");
 }
 
+function startEdit(item) {
+  resetAdd();
+  editing = item;
+  selectTab("add");
+  notice($("add-status"), "warn", []);
+  showForm(item, [], null);
+  $("add-title").textContent = "Edit item";
+  $("f-category").disabled = true;  // the id encodes the category
+  $("save-item").textContent = "Save changes";
+  $("delete-item").classList.remove("hidden");
+  if (item.has_photo) {
+    $("preview").src = `/api/items/${encodeURIComponent(item.id)}/photo`;
+    $("preview").classList.remove("hidden");
+  }
+}
+
+function backToCloset(message) {
+  resetAdd();
+  selectTab("closet");
+  notice($("closet-msg"), "warn", message ? [message] : []);
+}
+
 function resetAdd() {
   upload = null;
+  editing = null;
+  $("add-title").textContent = "Add an item";
+  $("f-category").disabled = false;
+  $("save-item").textContent = "Save to closet";
+  $("delete-item").classList.add("hidden");
   $("item-form").reset();
   $("item-form").classList.add("hidden");
   $("preview").classList.add("hidden");
@@ -405,7 +455,26 @@ $("manual").addEventListener("click", () => {
   notice($("add-status"), "warn", []);
   showForm({ category: "top", pattern: "solid", warmth: 2, formality: 3, condition: "good" }, [], null);
 });
-$("cancel-item").addEventListener("click", () => { resetAdd(); notice($("add-status"), "warn", []); });
+$("cancel-item").addEventListener("click", () => {
+  if (editing) return backToCloset("");
+  resetAdd();
+  notice($("add-status"), "warn", []);
+});
+
+$("delete-item").addEventListener("click", async () => {
+  const item = editing;
+  if (!item || !confirm(`Delete ${item.label} from your closet? This cannot be undone.`)) return;
+  const button = $("delete-item");
+  button.disabled = true;
+  try {
+    await api(`/api/items/${encodeURIComponent(item.id)}`, { method: "DELETE" });
+    backToCloset(`Deleted ${item.label}.`);
+  } catch (error) {
+    notice($("add-status"), "err", [error.message]);
+  } finally {
+    button.disabled = false;
+  }
+});
 
 $("photo").addEventListener("change", async () => {
   const file = $("photo").files[0];
@@ -452,6 +521,14 @@ $("item-form").addEventListener("submit", async (event) => {
   const button = $("save-item");
   button.disabled = true;
   try {
+    if (editing) {
+      const { category, upload: _unused, ...changes } = body;
+      const data = await api(`/api/items/${encodeURIComponent(editing.id)}`, {
+        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(changes),
+      });
+      backToCloset(`Saved changes to ${data.item.label}.`);
+      return;
+    }
     const data = await postJson("/api/items", body);
     resetAdd();
     notice($("add-status"), "warn", [`Saved ${data.item.label} as ${data.item.id}.`]);

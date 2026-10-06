@@ -187,3 +187,88 @@ def test_marking_an_outfit_worn_updates_last_worn(test_settings):
     assert response.status_code == 200
     assert all(item["last_worn"] for item in response.json()["items"])
     assert client.post("/api/worn", json={"item_ids": ["nope-001"]}).status_code == 400
+
+
+EDIT = {
+    "subcategory": "Oxford Shirt",
+    "colors": ["Sky Blue"],
+    "pattern": "striped",
+    "fabric": "cotton",
+    "warmth": 1,
+    "formality": 3,
+    "condition": "worn",
+    "notes": "Collar is fraying.",
+    "tags": ["workwear"],
+}
+
+
+def test_editing_an_item_changes_attributes_but_not_identity(test_settings):
+    client, _ = _client(test_settings)
+    before = next(i for i in client.get("/api/closet").json()["items"] if i["id"] == "top-001")
+
+    response = client.put("/api/items/top-001", json=EDIT)
+
+    assert response.status_code == 200
+    item = response.json()["item"]
+    assert item["label"] == "sky blue striped oxford shirt", "normalised like any other item"
+    assert item["condition"] == "worn"
+    for fixed in ("id", "category", "date_added", "last_worn", "source"):
+        assert item[fixed] == before[fixed]
+    saved = json.loads(test_settings.closet_path.read_text())["items"]
+    assert len(saved) == 15
+    assert next(i for i in saved if i["id"] == "top-001")["colors"] == ["sky blue"]
+
+
+@pytest.mark.parametrize(
+    ("item_id", "body", "status"),
+    [
+        ("top-001", {**EDIT, "warmth": 9}, 400),
+        ("top-001", {**EDIT, "category": "bottom"}, 422),
+        ("top-001", {**EDIT, "id": "top-999"}, 422),
+        ("nope-001", EDIT, 404),
+    ],
+)
+def test_a_bad_edit_changes_nothing(test_settings, item_id, body, status):
+    client, _ = _client(test_settings)
+    assert client.put(f"/api/items/{item_id}", json=body).status_code == status
+    assert not test_settings.closet_path.exists()
+
+
+def test_an_edit_discards_the_compatibility_cache(test_settings):
+    """The cache is keyed by ids, so it would otherwise survive an attribute change."""
+    test_settings.compatibility_cache_path.write_text("{}")
+    client, _ = _client(test_settings)
+
+    assert client.put("/api/items/top-001", json=EDIT).status_code == 200
+    assert not test_settings.compatibility_cache_path.exists()
+
+
+def test_deleting_an_item_removes_it_and_its_uploaded_photo(test_settings):
+    client, _ = _client(test_settings, _extraction())
+    draft = client.post(
+        "/api/extract", files={"photo": ("coat.jpg", b"jpeg bytes", "image/jpeg")}
+    ).json()
+    item_id = client.post("/api/items", json=_trench(upload=draft["upload"])).json()["item"]["id"]
+    photo = test_settings.closet_path.parent / "photos" / draft["upload"]
+    assert photo.exists()
+
+    response = client.delete(f"/api/items/{item_id}")
+
+    assert response.json() == {"deleted": item_id}
+    assert not photo.exists()
+    assert item_id not in {i["id"] for i in client.get("/api/closet").json()["items"]}
+    assert client.delete(f"/api/items/{item_id}").status_code == 404
+
+
+def test_deleting_leaves_a_photo_stored_elsewhere_alone(test_settings, tmp_path):
+    """A photo added through the CLI lives wherever the user keeps it."""
+    own_photo = tmp_path / "my-pictures" / "shirt.jpg"
+    own_photo.parent.mkdir()
+    own_photo.write_bytes(b"mine")
+    seed = json.loads(test_settings.seed_closet_path.read_text())
+    seed["items"][0]["photo_path"] = str(own_photo)
+    test_settings.closet_path.write_text(json.dumps(seed))
+    client, _ = _client(test_settings)
+
+    assert client.delete(f"/api/items/{seed['items'][0]['id']}").status_code == 200
+    assert own_photo.exists()
