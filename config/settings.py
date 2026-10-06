@@ -161,6 +161,10 @@ class Settings:
     stylist_max_items_in_prompt: int = field(
         default_factory=lambda: _env_int("WARDROBE_STYLIST_MAX_ITEMS_IN_PROMPT", 80)
     )
+    stylist_max_retries: int = field(
+        default_factory=lambda: _env_int("WARDROBE_STYLIST_MAX_RETRIES", 1)
+    )
+    """Extra calls allowed to replace outfits that were dropped as invalid. 0 disables."""
 
     def vision_model(self) -> str:
         """Model used for photo extraction."""

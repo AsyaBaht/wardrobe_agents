@@ -9,7 +9,10 @@ the day's constraints, and asks for ranked outfits with reasoning.
 
 What it does do is guard the boundary. The model may only reference ids that were
 actually sent; picks referencing anything else are dropped rather than
-hallucinated into a recommendation. Deterministic pre-filtering (retired items,
+hallucinated into a recommendation. So are picks that are not an outfit at all
+(two tops, no bottom, two coats): the prompt states those rules, but only this
+module enforces them. When a drop leaves the answer short, the stylist is asked
+again for replacements, told what was rejected and why. Deterministic pre-filtering (retired items,
 wildly out-of-season pieces) happens before the call to keep the prompt focused,
 with a documented fallback so the filter can never starve the stylist.
 
@@ -26,8 +29,9 @@ from typing import Sequence
 
 from config.settings import Settings, settings as default_settings
 from wardrobe_agents.agents.base import BaseAgent
-from wardrobe_agents.llm import StructuredLLM
+from wardrobe_agents.llm import LLMError, StructuredLLM
 from wardrobe_agents.schemas import (
+    Category,
     ClosetItem,
     Condition,
     FORMALITY_LABELS,
@@ -115,6 +119,33 @@ def _cap(items: Sequence[ClosetItem], limit: int) -> list[ClosetItem]:
     return sorted(items, key=lambda i: (i.last_worn is not None, i.last_worn or i.date_added))[:limit]
 
 
+def structure_problem(items: Sequence[ClosetItem]) -> str | None:
+    """Why these items are not an outfit, or ``None`` if they are.
+
+    Mirrors the hard rules in :data:`STYLIST_SYSTEM`: (one top + one bottom) or
+    (one dress), at most one outer layer, at most one pair of shoes. Shoes and
+    accessories stay optional - whether to include them is the stylist's call.
+    """
+    counts = {category: 0 for category in Category}
+    for item in items:
+        counts[item.category] += 1
+
+    tops, bottoms, dresses = counts[Category.TOP], counts[Category.BOTTOM], counts[Category.DRESS]
+    if dresses:
+        if dresses > 1:
+            return f"{dresses} dresses"
+        if tops or bottoms:
+            return "a dress combined with a top or bottom"
+    elif tops != 1 or bottoms != 1:
+        return f"needs one top and one bottom, or one dress (got {tops} top, {bottoms} bottom)"
+
+    if counts[Category.OUTER] > 1:
+        return f"{counts[Category.OUTER]} outer layers"
+    if counts[Category.SHOES] > 1:
+        return f"{counts[Category.SHOES]} pairs of shoes"
+    return None
+
+
 class StylistAgent(BaseAgent[StylistRequest, StylistResult]):
     """Closet + constraints -> ranked :class:`OutfitSuggestion` list."""
 
@@ -135,13 +166,44 @@ class StylistAgent(BaseAgent[StylistRequest, StylistResult]):
             )
 
         count = payload.count or self.settings.stylist_suggestion_count
+        index = {item.id: item for item in eligible}
+        prompt = self._prompt(eligible, payload, count)
+        result = StylistResult(considered_item_ids=list(index))
+
         response = self.llm.call(
             system=STYLIST_SYSTEM,
-            content=self._prompt(eligible, payload, count),
+            content=prompt,
             response_model=StylistResponse,
             purpose="choosing outfits from the closet",
         )
-        return self._validate(response, eligible)
+        result.overall_notes = response.overall_notes
+        dropped = self._accept(response, index, result, limit=count)
+
+        # Retry only to replace what was dropped. A stylist that chose to return
+        # fewer outfits is making a judgment, not a mistake.
+        for _ in range(self.settings.stylist_max_retries):
+            missing = count - len(result.suggestions)
+            if not dropped or missing <= 0:
+                break
+            try:
+                response = self.llm.call(
+                    system=STYLIST_SYSTEM,
+                    content=prompt + self._retry_note(result, dropped, missing),
+                    response_model=StylistResponse,
+                    purpose="replacing outfits that were not valid",
+                )
+            except LLMError as exc:
+                # The outfits already accepted are still a good answer.
+                result.warnings.append(f"Could not replace the dropped outfit(s): {exc}")
+                break
+            dropped = self._accept(response, index, result, limit=count)
+
+        if not result.suggestions:
+            raise StylistError(
+                "The stylist returned no usable outfits - every suggestion referenced items "
+                "that are not in the closet or was not a valid outfit. " + " ".join(result.warnings)
+            )
+        return result
 
     # ---- prompt ---------------------------------------------------------
 
@@ -192,28 +254,53 @@ class StylistAgent(BaseAgent[StylistRequest, StylistResult]):
         lines.append(f"Return {count} ranked outfits, best first.")
         return "\n".join(lines)
 
+    @staticmethod
+    def _retry_note(result: StylistResult, dropped: Sequence[str], missing: int) -> str:
+        lines = ["", "", "## Correction", "Some outfits in your previous answer were rejected:"]
+        lines += [f"- {reason}" for reason in dropped]
+        if result.suggestions:
+            lines.append("These were accepted - do not repeat them:")
+            lines += [f"- {s.name}: {', '.join(s.item_ids)}" for s in result.suggestions]
+        lines.append(f"Return {missing} more outfit(s) that follow the hard rules.")
+        return "\n".join(lines)
+
     # ---- response validation --------------------------------------------
 
     @staticmethod
-    def _validate(response: StylistResponse, eligible: Sequence[ClosetItem]) -> StylistResult:
-        index = {item.id: item for item in eligible}
-        result = StylistResult(
-            overall_notes=response.overall_notes,
-            considered_item_ids=[i.id for i in eligible],
-        )
+    def _accept(
+        response: StylistResponse,
+        index: dict[str, ClosetItem],
+        result: StylistResult,
+        *,
+        limit: int,
+    ) -> list[str]:
+        """Append the valid picks to ``result`` (up to ``limit`` suggestions in
+        total) and return the reasons for the ones dropped, which are also
+        recorded as warnings."""
+        dropped: list[str] = []
+        seen = {frozenset(s.item_ids) for s in result.suggestions}
 
-        rank = 1
         for pick in response.outfits:
+            if len(result.suggestions) >= limit:
+                break
             unknown = [i for i in pick.item_ids if i not in index]
             if unknown:
-                result.warnings.append(
+                dropped.append(
                     f"Dropped outfit {pick.name!r}: references unknown item(s) {', '.join(unknown)}."
                 )
                 continue
             deduped = list(dict.fromkeys(pick.item_ids))
+            problem = structure_problem([index[i] for i in deduped])
+            if problem:
+                dropped.append(f"Dropped outfit {pick.name!r}: not a valid outfit - {problem}.")
+                continue
+            if frozenset(deduped) in seen:
+                dropped.append(f"Dropped outfit {pick.name!r}: repeats an outfit already suggested.")
+                continue
+            seen.add(frozenset(deduped))
             result.suggestions.append(
                 OutfitSuggestion(
-                    rank=rank,
+                    rank=len(result.suggestions) + 1,
                     name=pick.name,
                     item_ids=deduped,
                     items=[index[i] for i in deduped],
@@ -223,11 +310,6 @@ class StylistAgent(BaseAgent[StylistRequest, StylistResult]):
                     confidence=pick.confidence,
                 )
             )
-            rank += 1
 
-        if not result.suggestions:
-            raise StylistError(
-                "The stylist returned no usable outfits - every suggestion referenced items "
-                "that are not in the closet. " + " ".join(result.warnings)
-            )
-        return result
+        result.warnings.extend(dropped)
+        return dropped

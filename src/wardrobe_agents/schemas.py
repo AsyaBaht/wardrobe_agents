@@ -457,6 +457,9 @@ class RecommendRunReport(BaseModel):
     target_formality: int | None = None
     suggestions: list[OutfitSuggestion]
     overall_notes: str = ""
+    warnings: list[str] = Field(
+        default_factory=list, description="Outfits the stylist returned that were dropped, and why."
+    )
     model: str = ""
 
 

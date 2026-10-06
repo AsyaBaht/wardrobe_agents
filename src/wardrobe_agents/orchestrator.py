@@ -153,6 +153,7 @@ def run_recommend(
             target_formality=target_formality,
             suggestions=stylist_result.suggestions,
             overall_notes=stylist_result.overall_notes,
+            warnings=stylist_result.warnings,
             model=settings.claude_model,
         )
         result.report_path = _write_report(result.report, settings, run_id)

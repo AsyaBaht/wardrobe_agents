@@ -116,6 +116,31 @@ def test_recommend_writes_a_replayable_report(seed_closet, constraints, stylist,
     assert report.constraints.location == "Berlin"
 
 
+def test_dropped_outfits_are_recorded_in_the_report(seed_closet, constraints, test_settings):
+    pick = dict(rationale="r", weather_fit="w", formality=3, confidence=0.8)
+    llm = FakeLLM(
+        [
+            StylistResponse(
+                outfits=[
+                    StylistPick(name="Real", item_ids=["top-001", "bottom-003"], **pick),
+                    StylistPick(name="Invented", item_ids=["top-001", "bottom-999"], **pick),
+                ],
+                overall_notes="",
+            )
+        ]
+    )
+    result = run_recommend(
+        seed_closet,
+        constraints=constraints,
+        stylist_agent=StylistAgent(llm=llm),
+        settings=test_settings,
+    )
+
+    report = RecommendRunReport.model_validate_json(result.report_path.read_text())
+    assert report.warnings == result.warnings
+    assert "bottom-999" in report.warnings[0]
+
+
 def test_reports_can_be_disabled(seed_closet, constraints, stylist, test_settings):
     result = run_recommend(
         seed_closet, constraints=constraints, stylist_agent=stylist, settings=test_settings, write_report=False

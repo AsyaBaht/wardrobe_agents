@@ -26,7 +26,7 @@ Verify the install without spending a token — stage 2 needs no key, no network
 ```bash
 wardrobe suggest-buy            # falls back to the bundled 15-item seed closet
 wardrobe outfits                # every valid outfit that closet supports
-pytest                          # 143 tests, none of which touch the network
+pytest                          # 160 tests, none of which touch the network
 ```
 
 To start your own closet from the seed:
@@ -151,7 +151,10 @@ before anything is saved. Photo batches run concurrently, bounded by
 gets the eligible closet and the constraints, and reasons about colour relationships, layering,
 formality agreement, and pattern balance. The module does no scoring of its own — it guards the
 boundary instead: picks referencing ids that were never sent are dropped rather than
-hallucinated into a recommendation, and if every pick is invalid it raises rather than returning
+hallucinated into a recommendation, as are picks that break the outfit structure (two tops, no
+bottom, two outer layers). A drop that leaves the answer short triggers one retry
+(`stylist_max_retries`) that tells the model what was rejected, and every drop is kept as a
+warning in the run report. If every pick is invalid it raises rather than returning
 something plausible-looking.
 
 ---
@@ -276,7 +279,7 @@ src/wardrobe_agents/
   cli.py                            typer CLI
 examples/seed_closet/closet.json    15 items, runs both stages with zero setup
 examples/candidate_purchases.json   7 candidates, including two deliberate duplicates
-tests/                              143 tests, no network
+tests/                              160 tests, no network
 reports/runs/                       timestamped run artifacts
 ```
 

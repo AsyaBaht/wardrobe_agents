@@ -30,7 +30,7 @@ from pathlib import Path
 from typing import Any, Generic, Sequence, TypeVar
 
 import anthropic
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from config.settings import Settings, settings as default_settings
 
@@ -193,6 +193,15 @@ class StructuredLLM:
             raise LLMError(f"Claude API error {exc.status_code} while {purpose}: {exc.message}") from exc
         except anthropic.APIConnectionError as exc:
             raise LLMError(f"Could not reach the Claude API while {purpose}: {exc}") from exc
+        except ValidationError as exc:
+            # The SDK validates client-side, so an out-of-range value or a response
+            # truncated at max_tokens surfaces here rather than as an API error.
+            first = exc.errors()[0]
+            where = ".".join(str(part) for part in first["loc"]) or "response"
+            raise LLMError(
+                f"Claude's response did not match {response_model.__name__} while {purpose} "
+                f"({exc.error_count()} problem(s); first at {where}: {first['msg']})."
+            ) from exc
 
         # Safety classifiers can decline with HTTP 200; check before reading content.
         if response.stop_reason == "refusal":

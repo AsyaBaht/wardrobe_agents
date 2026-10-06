@@ -16,7 +16,7 @@ from wardrobe_agents.agents.stylist import (
     StylistRequest,
     filter_for_weather,
 )
-from wardrobe_agents.llm import FakeLLM
+from wardrobe_agents.llm import FakeLLM, LLMError
 from wardrobe_agents.schemas import (
     StylistPick,
     StylistResponse,
@@ -114,6 +114,135 @@ def test_all_outfits_invalid_raises_rather_than_returning_nothing(seed_closet, c
         StylistAgent(llm=llm).run(
             StylistRequest(items=seed_closet.wearable(), constraints=constraints)
         )
+
+
+@pytest.mark.parametrize(
+    ("item_ids", "problem"),
+    [
+        (["top-001", "top-002", "bottom-003"], "2 top"),
+        (["top-001", "shoes-002"], "0 bottom"),
+        (["dress-001", "bottom-001"], "dress combined"),
+        (["top-001", "bottom-003", "outer-001", "outer-002"], "2 outer layers"),
+        (["top-001", "bottom-003", "shoes-001", "shoes-002"], "2 pairs of shoes"),
+    ],
+)
+def test_structurally_invalid_outfits_are_dropped_with_a_warning(
+    seed_closet, constraints, item_ids, problem
+):
+    """Real ids are not enough: the pick also has to be an outfit."""
+    llm = FakeLLM(
+        [_response(_pick("Broken", item_ids), _pick("Real", ["top-001", "bottom-003", "shoes-002"]))]
+    )
+    result = StylistAgent(llm=llm).run(
+        StylistRequest(items=seed_closet.wearable(), constraints=constraints)
+    )
+
+    assert [s.name for s in result.suggestions] == ["Real"]
+    assert result.suggestions[0].rank == 1
+    assert problem in result.warnings[0]
+
+
+@pytest.mark.parametrize(
+    "item_ids",
+    [
+        ["top-001", "bottom-003"],
+        ["dress-001"],
+        ["dress-001", "outer-001", "shoes-002"],
+    ],
+)
+def test_valid_structures_are_kept(seed_closet, constraints, item_ids):
+    llm = FakeLLM([_response(_pick("Fine", item_ids))])
+    result = StylistAgent(llm=llm).run(
+        StylistRequest(items=seed_closet.wearable(), constraints=constraints)
+    )
+    assert result.suggestions[0].item_ids == item_ids
+
+
+def test_a_dropped_outfit_is_replaced_by_a_retry(seed_closet, constraints):
+    llm = FakeLLM(
+        [
+            _response(
+                _pick("Real", ["top-001", "bottom-003", "shoes-002"]),
+                _pick("Two tops", ["top-001", "top-002", "bottom-003"]),
+            ),
+            _response(_pick("Replacement", ["top-003", "bottom-001", "shoes-002"])),
+        ]
+    )
+    result = StylistAgent(llm=llm).run(
+        StylistRequest(items=seed_closet.wearable(), constraints=constraints, count=2)
+    )
+
+    assert [(s.rank, s.name) for s in result.suggestions] == [(1, "Real"), (2, "Replacement")]
+    assert len(llm.calls) == 2
+    retry_prompt = llm.calls[1].content
+    assert "Two tops" in retry_prompt and "2 top" in retry_prompt, "the model is told what failed"
+    assert "top-001, bottom-003, shoes-002" in retry_prompt, "and what not to repeat"
+    assert "Return 1 more outfit" in retry_prompt
+    assert len(result.warnings) == 1, "the drop stays on the record even though it was replaced"
+
+
+def test_a_retry_that_repeats_an_accepted_outfit_is_dropped(seed_closet, constraints):
+    llm = FakeLLM(
+        [
+            _response(
+                _pick("Real", ["top-001", "bottom-003", "shoes-002"]),
+                _pick("Invented", ["top-001", "bottom-999"]),
+            ),
+            _response(_pick("Same again", ["shoes-002", "top-001", "bottom-003"])),
+        ]
+    )
+    result = StylistAgent(llm=llm).run(
+        StylistRequest(items=seed_closet.wearable(), constraints=constraints, count=2)
+    )
+
+    assert [s.name for s in result.suggestions] == ["Real"]
+    assert "repeats an outfit" in result.warnings[-1]
+    assert len(llm.calls) == 2, "retries are bounded"
+
+
+def test_a_failed_retry_keeps_the_outfits_already_accepted(seed_closet, constraints):
+    llm = FakeLLM(
+        [
+            _response(
+                _pick("Real", ["top-001", "bottom-003", "shoes-002"]),
+                _pick("Invented", ["top-001", "bottom-999"]),
+            ),
+            LLMError("rate limited"),
+        ]
+    )
+    result = StylistAgent(llm=llm).run(
+        StylistRequest(items=seed_closet.wearable(), constraints=constraints, count=2)
+    )
+
+    assert [s.name for s in result.suggestions] == ["Real"]
+    assert "rate limited" in result.warnings[-1]
+
+
+def test_no_retry_when_nothing_was_dropped(seed_closet, constraints):
+    """Returning fewer outfits than asked is the stylist's judgment, not an error."""
+    llm = FakeLLM([_response(_pick("Only one", ["top-001", "bottom-003", "shoes-002"]))])
+    result = StylistAgent(llm=llm).run(
+        StylistRequest(items=seed_closet.wearable(), constraints=constraints, count=3)
+    )
+
+    assert len(result.suggestions) == 1
+    assert len(llm.calls) == 1
+    assert result.warnings == []
+
+
+def test_surplus_outfits_are_trimmed_to_the_requested_count(seed_closet, constraints):
+    llm = FakeLLM(
+        [
+            _response(
+                _pick("One", ["top-001", "bottom-003"]),
+                _pick("Two", ["top-003", "bottom-001"]),
+            )
+        ]
+    )
+    result = StylistAgent(llm=llm).run(
+        StylistRequest(items=seed_closet.wearable(), constraints=constraints, count=1)
+    )
+    assert [s.name for s in result.suggestions] == ["One"]
 
 
 def test_duplicate_ids_within_one_outfit_are_collapsed(seed_closet, constraints):
