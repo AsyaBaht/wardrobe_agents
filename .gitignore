@@ -19,5 +19,7 @@ htmlcov/
 reports/runs/*
 !reports/runs/.gitkeep
 
+prompts/
+
 .DS_Store
 .env
