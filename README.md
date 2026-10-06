@@ -26,7 +26,7 @@ Verify the install without spending a token — stage 2 needs no key, no network
 ```bash
 wardrobe suggest-buy            # falls back to the bundled 15-item seed closet
 wardrobe outfits                # every valid outfit that closet supports
-pytest                          # 168 tests, none of which touch the network
+pytest                          # 184 tests, none of which touch the network
 ```
 
 To start your own closet from the seed:
@@ -61,10 +61,43 @@ wardrobe recommend --temp-min 8 --temp-max 17     skip the forecast, state condi
 wardrobe score [--rebuild] [--item top-001]       rebuild or inspect the compatibility matrix
 wardrobe outfits [-n 20]                          enumerate valid outfits
 wardrobe suggest-buy [--candidates file.json]     rank what to buy next
+wardrobe serve [--lan] [--port 8000]              the web UI, for a phone or a browser
 ```
 
 Every `recommend` and `suggest-buy` run writes a timestamped JSON report to `reports/runs/`, so
 results are artifacts you can diff rather than terminal scrollback.
+
+---
+
+## Web UI
+
+The same stage 1 pipeline, on a page built for a phone screen. It runs on your own computer; the
+phone is only a browser.
+
+```bash
+pip install -e ".[web]"         # FastAPI + uvicorn, not needed for the CLI
+export ANTHROPIC_API_KEY=sk-...
+wardrobe serve --lan            # prints the address to open on your phone
+```
+
+Open the printed `http://<your computer>:8000` address on a phone that is on the same Wi-Fi, and
+use the browser's *Add to Home Screen* to get an app-style icon. Without `--lan` the page is
+reachable only from the computer itself.
+
+| tab | what it does |
+| --- | --- |
+| **Today** | location (or temperatures you type in), date, occasion, formality → ranked outfits with item photos, the reasoning, and any warnings. *I wore this* updates `last_worn`. |
+| **Closet** | every item by category, with its photo when it has one. |
+| **Add** | take a photo → Claude reads the attributes → you check or edit them, with uncertain fields highlighted → save. Or fill the form by hand, which needs no API key. |
+
+Things to know:
+
+- **There is no login.** With `--lan`, anyone on the same network can view and change the closet
+  while the server is running. Do not use it on a network you do not trust.
+- It only works while the computer is on and `wardrobe serve` is running.
+- Photos are shrunk in the browser before upload and stored in `data/photos/`, beside the closet.
+- The page holds no logic of its own: `web/app.py` turns each request into the same orchestrator
+  and cataloguing calls the CLI makes, so every guard described below applies unchanged.
 
 ---
 
@@ -95,6 +128,7 @@ results are artifacts you can diff rather than terminal scrollback.
                                        (the only shared code)
 ```
 
+The web UI (`web/app.py`) sits beside `cli.py` as a second front end over the same calls.
 `recommend` and `suggest-buy` go through the orchestrator, which also writes the run report. The
 other commands write no report: `add` drives the cataloguing agent straight from the CLI, and
 `score` / `outfits` only build or read the compatibility graph.
@@ -409,9 +443,11 @@ src/wardrobe_agents/
   compatibility/optimizer.py        marginal-gain purchase ranking
   orchestrator.py                   the two pipelines
   cli.py                            typer CLI
+  web/app.py                        HTTP front end (optional `web` extra)
+  web/static/index.html             the single mobile page - no build step, no external assets
 examples/seed_closet/closet.json    15 items, runs both stages with zero setup
 examples/candidate_purchases.json   7 candidates, including two deliberate duplicates
-tests/                              168 tests, no network
+tests/                              184 tests, no network
 reports/runs/                       timestamped run artifacts
 ```
 
@@ -433,5 +469,5 @@ that cannot tell those two apart is not an optimizer.
 
 ## Not in this pass
 
-No web UI, no auth, no multi-user support, no e-commerce integration — candidate purchases come
+No auth, no multi-user support, no hosted deployment, no e-commerce integration — candidate purchases come
 from a local file.

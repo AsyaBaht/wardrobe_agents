@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Wardrobe">
+<meta name="theme-color" content="#f6f4f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16171a" media="(prefers-color-scheme: dark)">
+<title>Wardrobe</title>
+<style>
+:root {
+  --bg: #f6f4f0; --card: #ffffff; --ink: #1d1e21; --muted: #6a6d75; --line: #e2dfd8;
+  --accent: #2f5d50; --accent-ink: #ffffff; --warn-bg: #fdf3d7; --warn-ink: #6b4e00;
+  --err-bg: #fde4e1; --err-ink: #8a1f14; --thumb: #ebe8e1;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16171a; --card: #202227; --ink: #eceae6; --muted: #9a9da6; --line: #33363d;
+    --accent: #7fc4ad; --accent-ink: #10231d; --warn-bg: #3a3115; --warn-ink: #f1d98a;
+    --err-bg: #40201c; --err-ink: #ffb4a8; --thumb: #2b2e34;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 0 16px calc(84px + env(safe-area-inset-bottom));
+}
+main { max-width: 620px; margin: 0 auto; }
+h1 { font-size: 26px; margin: 22px 0 14px; letter-spacing: -0.01em; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 26px 0 8px; }
+p { margin: 0 0 8px; }
+.muted { color: var(--muted); font-size: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 4px; }
+input, select, textarea {
+  width: 100%; font: inherit; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-height: 44px;
+}
+textarea { min-height: 70px; resize: vertical; }
+input.unsure, select.unsure { border-color: #d9a400; box-shadow: 0 0 0 2px rgba(217, 164, 0, 0.25); }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+button {
+  font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 12px 16px;
+  min-height: 46px; background: var(--accent); color: var(--accent-ink); width: 100%; margin-top: 14px;
+}
+button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+button.link { background: none; color: var(--accent); width: auto; padding: 6px 0; min-height: 0; margin-top: 8px; font-weight: 500; }
+button:disabled { opacity: 0.55; }
+.notice { border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; font-size: 14px; }
+.notice.warn { background: var(--warn-bg); color: var(--warn-ink); }
+.notice.err { background: var(--err-bg); color: var(--err-ink); }
+.notice ul { margin: 0; padding-left: 18px; }
+.outfit h3 { margin: 0 0 10px; font-size: 18px; }
+.rank { color: var(--muted); font-weight: 500; margin-right: 6px; }
+.item { display: flex; gap: 12px; align-items: center; padding: 6px 0; }
+.thumb {
+  flex: 0 0 52px; width: 52px; height: 52px; border-radius: 10px; background: var(--thumb);
+  display: grid; place-items: center; overflow: hidden; position: relative; color: var(--muted); font-weight: 600;
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.thumb .dot { position: absolute; right: 4px; bottom: 4px; width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--line); }
+.item .name { font-weight: 500; }
+.item .meta { color: var(--muted); font-size: 13px; }
+.why { margin-top: 10px; font-size: 15px; }
+.why b { font-weight: 600; }
+.preview { width: 100%; max-height: 300px; object-fit: contain; border-radius: 10px; background: var(--thumb); margin-bottom: 8px; }
+.hidden { display: none !important; }
+nav {
+  position: fixed; left: 0; right: 0; bottom: 0; background: var(--card); border-top: 1px solid var(--line);
+  display: flex; padding-bottom: env(safe-area-inset-bottom);
+}
+nav button { flex: 1; background: none; color: var(--muted); border-radius: 0; margin: 0; min-height: 58px; font-weight: 500; }
+nav button[aria-selected="true"] { color: var(--accent); font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+  <!-- Today -->
+  <section id="tab-today">
+    <h1>What to wear</h1>
+    <form id="rec-form" class="card">
+      <div id="by-forecast">
+        <label for="location">Location</label>
+        <input id="location" placeholder="City, Country" autocomplete="address-level2">
+      </div>
+      <div id="by-temps" class="row hidden">
+        <div><label for="temp-min">Low °C</label><input id="temp-min" type="number" step="0.5" inputmode="decimal"></div>
+        <div><label for="temp-max">High °C</label><input id="temp-max" type="number" step="0.5" inputmode="decimal"></div>
+      </div>
+      <button type="button" class="link" id="toggle-temps">Enter temperatures instead</button>
+      <div class="row">
+        <div><label for="date">Date</label><input id="date" type="date"></div>
+        <div><label for="count">Outfits</label>
+          <select id="count"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div>
+      </div>
+      <label for="occasion">Occasion (optional)</label>
+      <input id="occasion" placeholder="e.g. client dinner">
+      <label for="formality">Formality</label>
+      <select id="formality">
+        <option value="">No preference</option>
+        <option value="1">1 · loungewear</option><option value="2">2 · casual</option>
+        <option value="3">3 · smart casual</option><option value="4">4 · business / dressy</option>
+        <option value="5">5 · formal</option>
+      </select>
+      <button id="rec-go">Suggest outfits</button>
+    </form>
+    <div id="rec-status"></div>
+    <div id="rec-out"></div>
+  </section>
+
+  <!-- Closet -->
+  <section id="tab-closet" class="hidden">
+    <h1>Closet</h1>
+    <div id="closet-status"></div>
+    <div id="closet-out"></div>
+  </section>
+
+  <!-- Add -->
+  <section id="tab-add" class="hidden">
+    <h1>Add an item</h1>
+    <div class="card" id="add-start">
+      <p class="muted">Take a photo of one garment. Its details are read for you to check before anything is saved.</p>
+      <input id="photo" type="file" accept="image/*" class="hidden">
+      <button id="pick-photo">Take or choose a photo</button>
+      <button id="manual" class="secondary">Add without a photo</button>
+    </div>
+    <div id="add-status"></div>
+    <form id="item-form" class="card hidden">
+      <img id="preview" class="preview hidden" alt="">
+      <p id="confidence" class="muted"></p>
+      <div class="row">
+        <div><label for="f-category">Category</label>
+          <select id="f-category"><option>top</option><option>bottom</option><option>dress</option><option>outer</option><option>shoes</option><option>accessory</option></select></div>
+        <div><label for="f-subcategory">Type</label><input id="f-subcategory" placeholder="oxford shirt" required></div>
+      </div>
+      <label for="f-colors">Colours (comma separated, main first)</label>
+      <input id="f-colors" placeholder="navy, white" required>
+      <div class="row">
+        <div><label for="f-pattern">Pattern</label><input id="f-pattern" value="solid" required></div>
+        <div><label for="f-fabric">Fabric</label><input id="f-fabric" placeholder="cotton" required></div>
+      </div>
+      <div class="row">
+        <div><label for="f-warmth">Warmth</label>
+          <select id="f-warmth"><option value="0">0 · hot weather only</option><option value="1">1 · light</option><option value="2" selected>2 · mild</option><option value="3">3 · cool</option><option value="4">4 · cold</option><option value="5">5 · freezing</option></select></div>
+        <div><label for="f-formality">Formality</label>
+          <select id="f-formality"><option value="1">1 · loungewear</option><option value="2">2 · casual</option><option value="3" selected>3 · smart casual</option><option value="4">4 · business</option><option value="5">5 · formal</option></select></div>
+      </div>
+      <label for="f-condition">Condition</label>
+      <select id="f-condition"><option>new</option><option>excellent</option><option selected>good</option><option>worn</option><option>retire</option></select>
+      <label for="f-tags">Tags (comma separated — use waterproof or windproof for rain and wind)</label>
+      <input id="f-tags" placeholder="waterproof, workwear">
+      <label for="f-notes">Notes</label>
+      <textarea id="f-notes"></textarea>
+      <button id="save-item">Save to closet</button>
+      <button type="button" class="secondary" id="cancel-item">Cancel</button>
+    </form>
+  </section>
+</main>
+
+<nav role="tablist">
+  <button role="tab" data-tab="today" aria-selected="true">Today</button>
+  <button role="tab" data-tab="closet" aria-selected="false">Closet</button>
+  <button role="tab" data-tab="add" aria-selected="false">Add</button>
+</nav>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const WARMTH = ["hot weather only", "light", "mild", "cool", "cold", "freezing"];
+const FORMALITY = ["", "loungewear", "casual", "smart casual", "business / dressy", "formal"];
+const CATEGORIES = ["top", "bottom", "dress", "outer", "shoes", "accessory"];
+
+// Everything from the server, including model-written text, is inserted as text.
+function el(tag, props = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(props)) {
+    if (key === "class") node.className = value;
+    else if (key === "text") node.textContent = value;
+    else node.setAttribute(key, value);
+  }
+  for (const child of children) if (child) node.append(child);
+  return node;
+}
+
+async function api(path, options = {}) {
+  let response;
+  try {
+    response = await fetch(path, options);
+  } catch {
+    throw new Error("Could not reach the wardrobe server. Is it still running on your computer?");
+  }
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const detail = body.detail;
+    if (Array.isArray(detail)) throw new Error(detail.map((d) => `${d.loc.slice(1).join(".")}: ${d.msg}`).join("; "));
+    throw new Error(typeof detail === "string" ? detail : "The server rejected that request.");
+  }
+  return body;
+}
+const postJson = (path, data) =>
+  api(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+
+function notice(target, kind, lines) {
+  target.replaceChildren();
+  if (!lines || !lines.length) return;
+  const box = el("div", { class: `notice ${kind}`, role: kind === "err" ? "alert" : "status" });
+  if (lines.length === 1) box.textContent = lines[0];
+  else box.append(el("ul", {}, ...lines.map((line) => el("li", { text: line }))));
+  target.append(box);
+}
+
+function thumb(item) {
+  const box = el("div", { class: "thumb" });
+  if (item.has_photo) {
+    box.append(el("img", { src: `/api/items/${encodeURIComponent(item.id)}/photo`, alt: "", loading: "lazy" }));
+  } else {
+    box.append(el("span", { text: item.category.slice(0, 1).toUpperCase() }));
+    const color = (item.colors[0] || "").replace(/\s+/g, "");
+    if (color && CSS.supports("color", color)) {
+      const dot = el("span", { class: "dot" });
+      dot.style.background = color;
+      box.append(dot);
+    }
+  }
+  return box;
+}
+
+function itemRow(item, detailed) {
+  const parts = [item.fabric, `warmth ${item.warmth}`, FORMALITY[item.formality]];
+  if (detailed) {
+    parts.push(item.last_worn ? `worn ${item.last_worn}` : "never worn");
+    if (item.tags.length) parts.push(item.tags.join(", "));
+  }
+  return el("div", { class: "item" }, thumb(item),
+    el("div", {}, el("div", { class: "name", text: item.label }), el("div", { class: "meta", text: parts.join(" · ") })));
+}
+
+// ---- tabs ---------------------------------------------------------------
+for (const button of document.querySelectorAll("nav button")) {
+  button.addEventListener("click", () => {
+    for (const other of document.querySelectorAll("nav button")) {
+      const active = other === button;
+      other.setAttribute("aria-selected", String(active));
+      $(`tab-${other.dataset.tab}`).classList.toggle("hidden", !active);
+    }
+    if (button.dataset.tab === "closet") loadCloset();
+    window.scrollTo(0, 0);
+  });
+}
+
+// ---- today --------------------------------------------------------------
+const today = new Date();
+$("date").value = new Date(today - today.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+try { $("location").value = localStorage.getItem("wardrobe.location") || ""; } catch {}
+
+let useTemps = false;
+$("toggle-temps").addEventListener("click", () => {
+  useTemps = !useTemps;
+  $("by-temps").classList.toggle("hidden", !useTemps);
+  $("by-forecast").classList.toggle("hidden", useTemps);
+  $("toggle-temps").textContent = useTemps ? "Use the forecast instead" : "Enter temperatures instead";
+});
+
+$("rec-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const body = {
+    date: $("date").value || null,
+    occasion: $("occasion").value.trim() || null,
+    formality: $("formality").value ? Number($("formality").value) : null,
+    count: Number($("count").value),
+  };
+  if (useTemps) {
+    if ($("temp-min").value === "" || $("temp-max").value === "") {
+      return notice($("rec-status"), "err", ["Enter both a low and a high temperature."]);
+    }
+    body.temp_min = Number($("temp-min").value);
+    body.temp_max = Number($("temp-max").value);
+  } else {
+    body.location = $("location").value.trim();
+    if (!body.location) return notice($("rec-status"), "err", ["Enter a location first."]);
+    try { localStorage.setItem("wardrobe.location", body.location); } catch {}
+  }
+
+  const button = $("rec-go");
+  button.disabled = true;
+  button.textContent = "Styling… this can take a minute";
+  notice($("rec-status"), "warn", []);
+  $("rec-out").replaceChildren();
+  try {
+    renderRecommendation(await postJson("/api/recommend", body));
+  } catch (error) {
+    notice($("rec-status"), "err", [error.message]);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Suggest outfits";
+  }
+});
+
+function renderRecommendation(data) {
+  const out = $("rec-out");
+  const c = data.constraints;
+  const weather = el("div", { class: "card" },
+    el("p", { text: data.summary }),
+    el("p", { class: "muted", text: `Warmth ${c.min_warmth}–${c.max_warmth} · ${c.layering_advice}` }));
+  if (c.notes) weather.append(el("p", { class: "muted", text: c.notes }));
+  out.append(weather);
+
+  for (const outfit of data.suggestions) {
+    const card = el("div", { class: "card outfit" },
+      el("h3", {}, el("span", { class: "rank", text: `${outfit.rank}.` }), outfit.name));
+    for (const item of outfit.items) card.append(itemRow(item, false));
+    card.append(el("p", { class: "why" }, el("b", { text: "Why: " }), outfit.rationale));
+    card.append(el("p", { class: "why" }, el("b", { text: "Weather: " }), outfit.weather_fit));
+    const worn = el("button", { class: "secondary", type: "button", text: "I wore this" });
+    worn.addEventListener("click", async () => {
+      worn.disabled = true;
+      try {
+        await postJson("/api/worn", { item_ids: outfit.item_ids });
+        worn.textContent = "Marked as worn today";
+      } catch (error) {
+        worn.disabled = false;
+        notice($("rec-status"), "err", [error.message]);
+      }
+    });
+    card.append(worn);
+    out.append(card);
+  }
+  if (data.overall_notes) out.append(el("div", { class: "card" }, el("p", { text: data.overall_notes })));
+  if (data.warnings.length) {
+    const box = el("div");
+    notice(box, "warn", data.warnings);
+    out.append(box);
+  }
+}
+
+// ---- closet -------------------------------------------------------------
+async function loadCloset() {
+  const out = $("closet-out");
+  try {
+    const data = await api("/api/closet");
+    notice($("closet-status"), "warn", data.is_seed
+      ? ["This is the bundled demo closet. Adding an item starts your own copy of it."] : []);
+    out.replaceChildren();
+    for (const category of CATEGORIES) {
+      const group = data.items.filter((item) => item.category === category);
+      if (!group.length) continue;
+      out.append(el("h2", { text: `${category} · ${group.length}` }));
+      out.append(el("div", { class: "card" }, ...group.map((item) => itemRow(item, true))));
+    }
+    if (!data.items.length) out.append(el("p", { class: "muted", text: "No items yet. Add one from the Add tab." }));
+  } catch (error) {
+    notice($("closet-status"), "err", [error.message]);
+  }
+}
+
+// ---- add ----------------------------------------------------------------
+let upload = null;
+const FIELDS = ["category", "subcategory", "colors", "pattern", "fabric", "warmth", "formality", "condition", "notes"];
+
+function showForm(item, unsure, confidence) {
+  for (const name of FIELDS) {
+    const input = $(`f-${name}`);
+    const value = item[name];
+    input.value = Array.isArray(value) ? value.join(", ") : (value ?? "");
+    input.classList.toggle("unsure", unsure.includes(name));
+  }
+  $("f-tags").value = "";
+  $("confidence").textContent = confidence == null ? "" :
+    `Read from the photo with ${Math.round(confidence * 100)}% confidence.` +
+    (unsure.length ? ` Check the highlighted field${unsure.length > 1 ? "s" : ""}.` : "");
+  $("item-form").classList.remove("hidden");
+  $("add-start").classList.add("hidden");
+}
+
+function resetAdd() {
+  upload = null;
+  $("item-form").reset();
+  $("item-form").classList.add("hidden");
+  $("preview").classList.add("hidden");
+  $("add-start").classList.remove("hidden");
+  $("photo").value = "";
+}
+
+// Phone photos are far larger than the model needs; shrink before uploading.
+async function shrink(file) {
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    const scale = Math.min(1, 1568 / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.85));
+    return blob || file;
+  } catch {
+    return file;
+  }
+}
+
+$("pick-photo").addEventListener("click", () => $("photo").click());
+$("manual").addEventListener("click", () => {
+  notice($("add-status"), "warn", []);
+  showForm({ category: "top", pattern: "solid", warmth: 2, formality: 3, condition: "good" }, [], null);
+});
+$("cancel-item").addEventListener("click", () => { resetAdd(); notice($("add-status"), "warn", []); });
+
+$("photo").addEventListener("change", async () => {
+  const file = $("photo").files[0];
+  if (!file) return;
+  const button = $("pick-photo");
+  button.disabled = true;
+  button.textContent = "Reading the photo…";
+  notice($("add-status"), "warn", []);
+  try {
+    const image = await shrink(file);
+    const form = new FormData();
+    form.append("photo", image, "photo.jpg");
+    const data = await api("/api/extract", { method: "POST", body: form });
+    upload = data.upload;
+    $("preview").src = URL.createObjectURL(image);
+    $("preview").classList.remove("hidden");
+    showForm(data.item, data.uncertain_fields, data.confidence);
+  } catch (error) {
+    notice($("add-status"), "err", [error.message]);
+    $("photo").value = "";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Take or choose a photo";
+  }
+});
+
+const list = (text) => text.split(",").map((part) => part.trim()).filter(Boolean);
+
+$("item-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const body = {
+    category: $("f-category").value,
+    subcategory: $("f-subcategory").value.trim(),
+    colors: list($("f-colors").value),
+    pattern: $("f-pattern").value.trim(),
+    fabric: $("f-fabric").value.trim(),
+    warmth: Number($("f-warmth").value),
+    formality: Number($("f-formality").value),
+    condition: $("f-condition").value,
+    notes: $("f-notes").value.trim() || null,
+    tags: list($("f-tags").value),
+    upload,
+  };
+  const button = $("save-item");
+  button.disabled = true;
+  try {
+    const data = await postJson("/api/items", body);
+    resetAdd();
+    notice($("add-status"), "warn", [`Saved ${data.item.label} as ${data.item.id}.`]);
+  } catch (error) {
+    notice($("add-status"), "err", [error.message]);
+  } finally {
+    button.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

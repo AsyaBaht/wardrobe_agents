@@ -15,6 +15,7 @@ Author: Anastasiia Bakhtoiarova
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import shutil
 from datetime import date
@@ -675,3 +676,55 @@ def suggest_buy(
 
 if __name__ == "__main__":  # pragma: no cover
     app()
+
+
+@app.command()
+def serve(
+    port: Annotated[int, typer.Option("--port", "-p", help="Port to listen on.")] = 8000,
+    lan: Annotated[
+        bool,
+        typer.Option("--lan", help="Reachable from other devices on your network (e.g. your phone)."),
+    ] = False,
+) -> None:
+    """Run the web UI on this computer."""
+    try:
+        import uvicorn
+
+        from wardrobe_agents.web import create_app
+    except ModuleNotFoundError as exc:
+        _err(f"The web UI needs extra packages ({exc.name}). Install them with: pip install -e '.[web]'")
+
+    web_settings = settings
+    if _state.get("closet_path"):
+        web_settings = dataclasses.replace(settings, closet_path=Path(_state["closet_path"]))
+
+    host = "0.0.0.0" if lan else "127.0.0.1"
+    typer.secho(f"Wardrobe is running at http://localhost:{port}", bold=True)
+    if lan:
+        typer.secho(f"On your phone (same Wi-Fi): http://{_lan_address()}:{port}", bold=True)
+        typer.secho(
+            "There is no login: anyone on this network can view and change the closet "
+            "while this is running.",
+            fg=typer.colors.YELLOW,
+        )
+    if not StructuredLLM(settings).is_configured():
+        typer.secho(
+            f"{settings.api_key_env_var} is not set, so recommendations and photo reading "
+            "will not work until it is.",
+            fg=typer.colors.YELLOW,
+        )
+    typer.echo("Press Ctrl-C to stop.")
+    uvicorn.run(create_app(web_settings), host=host, port=port, log_level="warning")
+
+
+def _lan_address() -> str:
+    """This machine's address on the local network. Connecting a UDP socket picks
+    the outgoing interface without sending anything."""
+    import socket
+
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.connect(("192.0.2.1", 80))
+            return sock.getsockname()[0]
+    except OSError:
+        return "<this computer's IP address>"
