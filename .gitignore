@@ -20,6 +20,13 @@ reports/runs/*
 !reports/runs/.gitkeep
 
 prompts/
+examples/
 
 .DS_Store
+
+# Secrets. The template .env.example is committed; real values never are.
 .env
+.env.*
+!.env.example
+*.key
+secrets.*

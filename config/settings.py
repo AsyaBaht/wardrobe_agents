@@ -6,7 +6,9 @@ the same code runs against different models, data locations, and thresholds
 without edits.
 
 The Claude API key is deliberately *not* a field: it is read from the
-environment by the Anthropic SDK at call time and never stored or logged.
+environment by the Anthropic SDK at call time and never stored or logged. A
+git-ignored ``.env`` at the repository root is loaded into the environment on
+import, so the key does not have to be exported in every shell.
 
 Author: Anastasiia Bakhtoiarova
 """
@@ -18,8 +20,14 @@ from dataclasses import dataclass, field, fields
 from pathlib import Path
 from typing import Any
 
+from dotenv import load_dotenv
+
 # Repository root: <root>/config/settings.py -> <root>
 ROOT_DIR = Path(__file__).resolve().parent.parent
+
+# Load <root>/.env if it exists. Variables already set in the environment win
+# (override=False), and nothing here reads or keeps the key itself.
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 
 def _env_str(name: str, default: str) -> str:
