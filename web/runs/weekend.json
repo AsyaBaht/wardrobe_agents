@@ -1,0 +1,357 @@
+{
+ "id": "weekend",
+ "stage": "recommend",
+ "order": 3,
+ "sample": false,
+ "label": "Spring weekend",
+ "blurb": "A clear, mild Saturday: brunch, then a long walk.",
+ "generated_at": "2026-10-25T22:51:03+00:00",
+ "inputs": {
+  "occasion": "weekend brunch and a long walk",
+  "formality": 2
+ },
+ "forecast": {
+  "date": "2026-05-16",
+  "location": "Lisbon, Portugal",
+  "temp_min_c": 15.0,
+  "temp_max_c": 23.0,
+  "precipitation_mm": 0.0,
+  "precipitation_probability_pct": 0,
+  "wind_kph": 10.0,
+  "weather_code": 0,
+  "conditions": "clear sky"
+ },
+ "ambiguous": false,
+ "rules_constraints": {
+  "date": "2026-05-16",
+  "location": "Lisbon, Portugal",
+  "temp_min_c": 15.0,
+  "temp_max_c": 23.0,
+  "temp_band": "warm",
+  "precipitation_mm": 0.0,
+  "precipitation_probability_pct": 0,
+  "wind_kph": 10.0,
+  "conditions": "clear sky",
+  "min_warmth": 1,
+  "max_warmth": 2,
+  "needs_waterproof_outer": false,
+  "needs_windproof": false,
+  "prefer_fabrics": [
+   "cotton",
+   "linen"
+  ],
+  "avoid_fabrics": [
+   "wool",
+   "fleece",
+   "down"
+  ],
+  "layering_advice": "Steady temperatures; a single layer plus an optional light outer works.",
+  "notes": "",
+  "source": "rules"
+ },
+ "model_calls": [
+  "choosing outfits from the closet"
+ ],
+ "report": {
+  "run_id": "20261025T175103-recommend",
+  "stage": "recommend",
+  "created_at": "2026-10-25T17:51:03.874886",
+  "closet_path": "examples/seed_closet/closet.json",
+  "closet_item_count": 15,
+  "constraints": {
+   "date": "2026-05-16",
+   "location": "Lisbon, Portugal",
+   "temp_min_c": 15.0,
+   "temp_max_c": 23.0,
+   "temp_band": "warm",
+   "precipitation_mm": 0.0,
+   "precipitation_probability_pct": 0,
+   "wind_kph": 10.0,
+   "conditions": "clear sky",
+   "min_warmth": 1,
+   "max_warmth": 2,
+   "needs_waterproof_outer": false,
+   "needs_windproof": false,
+   "prefer_fabrics": [
+    "cotton",
+    "linen"
+   ],
+   "avoid_fabrics": [
+    "wool",
+    "fleece",
+    "down"
+   ],
+   "layering_advice": "Steady temperatures; a single layer plus an optional light outer works.",
+   "notes": "",
+   "source": "rules"
+  },
+  "occasion": "weekend brunch and a long walk",
+  "target_formality": 2,
+  "suggestions": [
+   {
+    "rank": 1,
+    "name": "Tejo Promenade",
+    "item_ids": [
+     "top-002",
+     "bottom-003",
+     "shoes-001",
+     "outer-002"
+    ],
+    "items": [
+     {
+      "id": "top-002",
+      "category": "top",
+      "subcategory": "breton tee",
+      "colors": [
+       "navy",
+       "white"
+      ],
+      "pattern": "striped",
+      "fabric": "cotton",
+      "warmth": 1,
+      "formality": 2,
+      "condition": "good",
+      "date_added": "2024-05-02",
+      "last_worn": "2026-08-28",
+      "notes": null,
+      "tags": [
+       "casual"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "bottom-003",
+      "category": "bottom",
+      "subcategory": "chinos",
+      "colors": [
+       "olive"
+      ],
+      "pattern": "solid",
+      "fabric": "cotton",
+      "warmth": 2,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-09-05",
+      "last_worn": "2026-08-20",
+      "notes": null,
+      "tags": [
+       "everyday"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "shoes-001",
+      "category": "shoes",
+      "subcategory": "leather sneakers",
+      "colors": [
+       "white"
+      ],
+      "pattern": "solid",
+      "fabric": "leather",
+      "warmth": 1,
+      "formality": 2,
+      "condition": "good",
+      "date_added": "2025-03-01",
+      "last_worn": "2026-08-29",
+      "notes": null,
+      "tags": [
+       "everyday"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "outer-002",
+      "category": "outer",
+      "subcategory": "trucker jacket",
+      "colors": [
+       "indigo"
+      ],
+      "pattern": "solid",
+      "fabric": "denim",
+      "warmth": 2,
+      "formality": 2,
+      "condition": "worn",
+      "date_added": "2023-06-15",
+      "last_worn": "2026-08-19",
+      "notes": "Fading at the cuffs but still the default spring jacket.",
+      "tags": [
+       "casual"
+      ],
+      "source": "seed",
+      "photo_path": null
+     }
+    ],
+    "rationale": "The navy/white breton against olive chinos is the cleanest colour pairing in this closet: olive is a muted warm green that sits quietly under navy instead of competing, and the white stripe echoes the white sneaker so the whole thing reads deliberate rather than thrown together. Keeping the indigo trucker off the olive bottom avoids the matchy denim-on-denim problem you'd get with the jeans. Formality lands exactly at casual-2 for brunch, and cotton everywhere means nothing clings on a long walk.",
+    "weather_fit": "Tee (warmth 1) plus cotton chinos (2) is right for the 23C peak; the trucker is a warmth-2 shell you need only for the 15C morning and the 10kph breeze, then it ties around the waist or over the shoulder.",
+    "formality": 2,
+    "confidence": 0.91
+   },
+   {
+    "rank": 2,
+    "name": "Rolled-Sleeve Oxford",
+    "item_ids": [
+     "top-001",
+     "bottom-001",
+     "shoes-001"
+    ],
+    "items": [
+     {
+      "id": "top-001",
+      "category": "top",
+      "subcategory": "oxford shirt",
+      "colors": [
+       "white"
+      ],
+      "pattern": "solid",
+      "fabric": "cotton",
+      "warmth": 2,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-03-12",
+      "last_worn": "2026-08-24",
+      "notes": "Workhorse shirt, slightly softened collar.",
+      "tags": [
+       "workwear",
+       "layerable"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "bottom-001",
+      "category": "bottom",
+      "subcategory": "straight jeans",
+      "colors": [
+       "indigo"
+      ],
+      "pattern": "solid",
+      "fabric": "denim",
+      "warmth": 2,
+      "formality": 2,
+      "condition": "good",
+      "date_added": "2024-01-20",
+      "last_worn": "2026-08-29",
+      "notes": null,
+      "tags": [
+       "everyday"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "shoes-001",
+      "category": "shoes",
+      "subcategory": "leather sneakers",
+      "colors": [
+       "white"
+      ],
+      "pattern": "solid",
+      "fabric": "leather",
+      "warmth": 1,
+      "formality": 2,
+      "condition": "good",
+      "date_added": "2025-03-01",
+      "last_worn": "2026-08-29",
+      "notes": null,
+      "tags": [
+       "everyday"
+      ],
+      "source": "seed",
+      "photo_path": null
+     }
+    ],
+    "rationale": "A different register: the softened white oxford with sleeves rolled to the forearm is the one way this wardrobe gets a bit polished without tipping into office clothes. White over indigo is the most reliable high-contrast pairing there is, and the white sneaker closes the loop with the shirt rather than introducing a third colour. Skipping outerwear entirely keeps it from drifting upward in formality — a jacket over an oxford would start to look like a work outfit.",
+    "weather_fit": "Breathable cotton poplin and straight denim handle 23C in open sun; the shirt worn buttoned at the 15C start and unbuttoned/rolled later is the whole temperature adjustment you need. No wool anywhere.",
+    "formality": 3,
+    "confidence": 0.83
+   },
+   {
+    "rank": 3,
+    "name": "Breton in Indigo",
+    "item_ids": [
+     "top-002",
+     "bottom-001",
+     "shoes-002"
+    ],
+    "items": [
+     {
+      "id": "top-002",
+      "category": "top",
+      "subcategory": "breton tee",
+      "colors": [
+       "navy",
+       "white"
+      ],
+      "pattern": "striped",
+      "fabric": "cotton",
+      "warmth": 1,
+      "formality": 2,
+      "condition": "good",
+      "date_added": "2024-05-02",
+      "last_worn": "2026-08-28",
+      "notes": null,
+      "tags": [
+       "casual"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "bottom-001",
+      "category": "bottom",
+      "subcategory": "straight jeans",
+      "colors": [
+       "indigo"
+      ],
+      "pattern": "solid",
+      "fabric": "denim",
+      "warmth": 2,
+      "formality": 2,
+      "condition": "good",
+      "date_added": "2024-01-20",
+      "last_worn": "2026-08-29",
+      "notes": null,
+      "tags": [
+       "everyday"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "shoes-002",
+      "category": "shoes",
+      "subcategory": "chelsea boots",
+      "colors": [
+       "brown"
+      ],
+      "pattern": "solid",
+      "fabric": "suede",
+      "warmth": 3,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-10-11",
+      "last_worn": "2026-04-08",
+      "notes": null,
+      "tags": [
+       "autumn",
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     }
+    ],
+    "rationale": "The stripe-and-indigo combination is the plainest thing here, so the suede chelsea does the work: its warm brown pulls against the cool navy and indigo and keeps the look from going flat and nautical-literal. Three pieces, no outer, nothing to carry — the most stripped-back option if brunch is long and the walk is longer. Ranked third only because the boot is the compromise.",
+    "weather_fit": "Top and bottom are correctly in the 1-2 window. The chelsea boot is rated 3 and is the one item outside it — suede plus a closed ankle will run warm by mid-afternoon at 23C, so this works best if the day stays in the lower half of the range or the walk is shaded.",
+    "formality": 2,
+    "confidence": 0.68
+   }
+  ],
+  "overall_notes": "This closet is built for work and cool weather, not a warm clear Lisbon Saturday. The genuinely weather-correct, formality-correct pieces are a short list: the breton tee, the oxford, the jeans and the chinos, and the white sneakers — which is why all three looks draw from the same small pool. The charcoal trousers, black sheath, derby shoes and black silk blouse are all formality 4-5 and wrong for brunch; the check overshirt is wool flannel at warmth 3 and would be stifling today. You have exactly one casual shoe, so the sneaker repeats by necessity rather than choice. If you want more range for warm weekends, the gaps are obvious: a linen shirt, a pair of lighter-weight trousers or shorts, and a second casual shoe in a warm tone.",
+  "warnings": [],
+  "model": "claude-opus-5"
+ },
+ "error": null
+}

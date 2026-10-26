@@ -1,0 +1,400 @@
+{
+ "id": "dinner",
+ "stage": "recommend",
+ "order": 4,
+ "sample": false,
+ "label": "Formal dinner",
+ "blurb": "A cool evening and a formal dinner, from a closet with one formal top.",
+ "generated_at": "2026-10-25T22:55:31+00:00",
+ "inputs": {
+  "occasion": "dinner at a formal restaurant",
+  "formality": 5
+ },
+ "forecast": {
+  "date": "2026-10-09",
+  "location": "Copenhagen, Denmark",
+  "temp_min_c": 8.0,
+  "temp_max_c": 14.0,
+  "precipitation_mm": 0.0,
+  "precipitation_probability_pct": 0,
+  "wind_kph": 12.0,
+  "weather_code": 3,
+  "conditions": "overcast"
+ },
+ "ambiguous": false,
+ "rules_constraints": {
+  "date": "2026-10-09",
+  "location": "Copenhagen, Denmark",
+  "temp_min_c": 8.0,
+  "temp_max_c": 14.0,
+  "temp_band": "cool",
+  "precipitation_mm": 0.0,
+  "precipitation_probability_pct": 0,
+  "wind_kph": 12.0,
+  "conditions": "overcast",
+  "min_warmth": 3,
+  "max_warmth": 3,
+  "needs_waterproof_outer": false,
+  "needs_windproof": false,
+  "prefer_fabrics": [
+   "wool",
+   "denim",
+   "cotton"
+  ],
+  "avoid_fabrics": [
+   "linen"
+  ],
+  "layering_advice": "Steady temperatures; a single layer plus an optional light outer works.",
+  "notes": "",
+  "source": "rules"
+ },
+ "model_calls": [
+  "choosing outfits from the closet"
+ ],
+ "report": {
+  "run_id": "20261025T175531-recommend",
+  "stage": "recommend",
+  "created_at": "2026-10-25T17:55:31.906394",
+  "closet_path": "examples/seed_closet/closet.json",
+  "closet_item_count": 15,
+  "constraints": {
+   "date": "2026-10-09",
+   "location": "Copenhagen, Denmark",
+   "temp_min_c": 8.0,
+   "temp_max_c": 14.0,
+   "temp_band": "cool",
+   "precipitation_mm": 0.0,
+   "precipitation_probability_pct": 0,
+   "wind_kph": 12.0,
+   "conditions": "overcast",
+   "min_warmth": 3,
+   "max_warmth": 3,
+   "needs_waterproof_outer": false,
+   "needs_windproof": false,
+   "prefer_fabrics": [
+    "wool",
+    "denim",
+    "cotton"
+   ],
+   "avoid_fabrics": [
+    "linen"
+   ],
+   "layering_advice": "Steady temperatures; a single layer plus an optional light outer works.",
+   "notes": "",
+   "source": "rules"
+  },
+  "occasion": "dinner at a formal restaurant",
+  "target_formality": 5,
+  "suggestions": [
+   {
+    "rank": 1,
+    "name": "Black Crepe, Camel Coat",
+    "item_ids": [
+     "dress-001",
+     "outer-001",
+     "shoes-003",
+     "accessory-001"
+    ],
+    "items": [
+     {
+      "id": "dress-001",
+      "category": "dress",
+      "subcategory": "sheath dress",
+      "colors": [
+       "black"
+      ],
+      "pattern": "solid",
+      "fabric": "wool crepe",
+      "warmth": 2,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-04-30",
+      "last_worn": "2026-05-16",
+      "notes": null,
+      "tags": [
+       "work",
+       "evening"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "outer-001",
+      "category": "outer",
+      "subcategory": "overcoat",
+      "colors": [
+       "camel"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 4,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2024-11-08",
+      "last_worn": "2026-02-27",
+      "notes": null,
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "shoes-003",
+      "category": "shoes",
+      "subcategory": "derby shoes",
+      "colors": [
+       "black"
+      ],
+      "pattern": "solid",
+      "fabric": "leather",
+      "warmth": 2,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-02-14",
+      "last_worn": "2026-06-11",
+      "notes": null,
+      "tags": [
+       "formal",
+       "work"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "accessory-001",
+      "category": "accessory",
+      "subcategory": "scarf",
+      "colors": [
+       "charcoal"
+      ],
+      "pattern": "solid",
+      "fabric": "merino wool",
+      "warmth": 4,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-11-08",
+      "last_worn": "2026-02-27",
+      "notes": null,
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     }
+    ],
+    "rationale": "The black wool crepe sheath is the single most formal piece here, and it reads evening without effort. Camel over black is the classic high-contrast pairing - the warm tan keeps the black from going funereal, and both are solid colours so nothing competes. Black derbies close the look at the same formality as the dress rather than dragging it down, and the charcoal scarf bridges the black and camel as a mid-tone instead of adding a third hue. This is the only combination in the closet that genuinely lands near formal.",
+    "weather_fit": "The dress is only warmth 2, below today's window, but the camel overcoat (warmth 4) and merino scarf more than compensate for 8-14C and a 12 kph wind - a light dress under a proper wool coat is exactly how this temperature is meant to be dressed. Overcast with no rain means suede isn't a concern and leather soles are safe.",
+    "formality": 5,
+    "confidence": 0.84
+   },
+   {
+    "rank": 2,
+    "name": "Charcoal Tailoring, Softened Collar",
+    "item_ids": [
+     "top-001",
+     "bottom-002",
+     "outer-001",
+     "shoes-003"
+    ],
+    "items": [
+     {
+      "id": "top-001",
+      "category": "top",
+      "subcategory": "oxford shirt",
+      "colors": [
+       "white"
+      ],
+      "pattern": "solid",
+      "fabric": "cotton",
+      "warmth": 2,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-03-12",
+      "last_worn": "2026-08-24",
+      "notes": "Workhorse shirt, slightly softened collar.",
+      "tags": [
+       "workwear",
+       "layerable"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "bottom-002",
+      "category": "bottom",
+      "subcategory": "tailored trousers",
+      "colors": [
+       "charcoal"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 3,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-02-14",
+      "last_worn": "2026-06-11",
+      "notes": null,
+      "tags": [
+       "workwear"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "outer-001",
+      "category": "outer",
+      "subcategory": "overcoat",
+      "colors": [
+       "camel"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 4,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2024-11-08",
+      "last_worn": "2026-02-27",
+      "notes": null,
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "shoes-003",
+      "category": "shoes",
+      "subcategory": "derby shoes",
+      "colors": [
+       "black"
+      ],
+      "pattern": "solid",
+      "fabric": "leather",
+      "warmth": 2,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-02-14",
+      "last_worn": "2026-06-11",
+      "notes": null,
+      "tags": [
+       "formal",
+       "work"
+      ],
+      "source": "seed",
+      "photo_path": null
+     }
+    ],
+    "rationale": "Charcoal wool trousers and black derbies are the closet's other formal spine; the white oxford gives the crisp top-of-collar brightness a dark suiting palette needs. Camel overcoat again lifts the grey-and-white from austere to considered. The honest weakness is the oxford's softened collar and workwear character - it sits a notch below the trousers, so this reads smart business rather than true formal restaurant. No scarf here: the white collar is the point of light and a charcoal scarf would smother it.",
+    "weather_fit": "Charcoal wool trousers sit squarely in the warmth window. The cotton shirt alone would be thin at 8C, but the camel wool coat covers the gap and comes off cleanly indoors.",
+    "formality": 4,
+    "confidence": 0.68
+   },
+   {
+    "rank": 3,
+    "name": "Rust Knit Under Camel",
+    "item_ids": [
+     "top-003",
+     "bottom-002",
+     "outer-001",
+     "shoes-002"
+    ],
+    "items": [
+     {
+      "id": "top-003",
+      "category": "top",
+      "subcategory": "ribbed turtleneck",
+      "colors": [
+       "rust"
+      ],
+      "pattern": "solid",
+      "fabric": "merino wool",
+      "warmth": 4,
+      "formality": 3,
+      "condition": "excellent",
+      "date_added": "2025-10-18",
+      "last_worn": "2026-03-02",
+      "notes": "The only strong colour in the closet.",
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "bottom-002",
+      "category": "bottom",
+      "subcategory": "tailored trousers",
+      "colors": [
+       "charcoal"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 3,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-02-14",
+      "last_worn": "2026-06-11",
+      "notes": null,
+      "tags": [
+       "workwear"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "outer-001",
+      "category": "outer",
+      "subcategory": "overcoat",
+      "colors": [
+       "camel"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 4,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2024-11-08",
+      "last_worn": "2026-02-27",
+      "notes": null,
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "shoes-002",
+      "category": "shoes",
+      "subcategory": "chelsea boots",
+      "colors": [
+       "brown"
+      ],
+      "pattern": "solid",
+      "fabric": "suede",
+      "warmth": 3,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-10-11",
+      "last_worn": "2026-04-08",
+      "notes": null,
+      "tags": [
+       "autumn",
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     }
+    ],
+    "rationale": "A deliberate detour: the rust merino turtleneck is the only saturated colour you own, and rust sits directly in the camel coat's warm family while the brown suede of the chelsea boots picks up the same red-brown undertone - three warm notes against the cold charcoal of the trousers. A fine-gauge turtleneck with tailored wool is a legitimately elegant dinner register, just not a formal-restaurant one; the suede boots are the piece holding it at smart casual. Choose this if the room is softer than advertised.",
+    "weather_fit": "Best-insulated option of the three: merino turtleneck at warmth 4 plus wool trousers and wool coat handle the wind comfortably, and the turtleneck removes any need for a scarf. Suede is fine with 0% precipitation.",
+    "formality": 3,
+    "confidence": 0.55
+   }
+  ],
+  "overall_notes": "This closet can only genuinely reach formality 5 once, via the black sheath dress plus camel coat plus black derbies - everything else tops out at business-dressy. The gap is a jacket: there's no blazer or suit, no silk or dress shirt beyond a softened-collar oxford, and no evening shoe beyond the derbies. The denim trucker, check overshirt, jeans and chinos are all off the table for a formal restaurant, so the outer layer is camel overcoat or nothing. If the dress isn't an option tonight, go with outfit two and accept that it reads office-evening rather than formal.",
+  "warnings": [],
+  "model": "claude-opus-5"
+ },
+ "error": null
+}

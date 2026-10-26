@@ -1,0 +1,444 @@
+{
+ "id": "office",
+ "stage": "recommend",
+ "order": 1,
+ "sample": false,
+ "label": "Office, client meeting",
+ "blurb": "A cool, overcast workday with a client meeting. Dressy, not formal.",
+ "generated_at": "2026-10-25T22:49:38+00:00",
+ "inputs": {
+  "occasion": "office day with a client meeting",
+  "formality": 4
+ },
+ "forecast": {
+  "date": "2026-11-12",
+  "location": "Berlin, Germany",
+  "temp_min_c": 6.0,
+  "temp_max_c": 12.0,
+  "precipitation_mm": 0.0,
+  "precipitation_probability_pct": 10,
+  "wind_kph": 8.0,
+  "weather_code": 3,
+  "conditions": "overcast"
+ },
+ "ambiguous": false,
+ "rules_constraints": {
+  "date": "2026-11-12",
+  "location": "Berlin, Germany",
+  "temp_min_c": 6.0,
+  "temp_max_c": 12.0,
+  "temp_band": "cool",
+  "precipitation_mm": 0.0,
+  "precipitation_probability_pct": 10,
+  "wind_kph": 8.0,
+  "conditions": "overcast",
+  "min_warmth": 3,
+  "max_warmth": 4,
+  "needs_waterproof_outer": false,
+  "needs_windproof": false,
+  "prefer_fabrics": [
+   "wool",
+   "denim",
+   "cotton"
+  ],
+  "avoid_fabrics": [
+   "linen"
+  ],
+  "layering_advice": "Cold enough that an insulating outer layer is doing the real work.",
+  "notes": "",
+  "source": "rules"
+ },
+ "model_calls": [
+  "choosing outfits from the closet"
+ ],
+ "report": {
+  "run_id": "20261025T174938-recommend",
+  "stage": "recommend",
+  "created_at": "2026-10-25T17:49:38.130618",
+  "closet_path": "examples/seed_closet/closet.json",
+  "closet_item_count": 15,
+  "constraints": {
+   "date": "2026-11-12",
+   "location": "Berlin, Germany",
+   "temp_min_c": 6.0,
+   "temp_max_c": 12.0,
+   "temp_band": "cool",
+   "precipitation_mm": 0.0,
+   "precipitation_probability_pct": 10,
+   "wind_kph": 8.0,
+   "conditions": "overcast",
+   "min_warmth": 3,
+   "max_warmth": 4,
+   "needs_waterproof_outer": false,
+   "needs_windproof": false,
+   "prefer_fabrics": [
+    "wool",
+    "denim",
+    "cotton"
+   ],
+   "avoid_fabrics": [
+    "linen"
+   ],
+   "layering_advice": "Cold enough that an insulating outer layer is doing the real work.",
+   "notes": "",
+   "source": "rules"
+  },
+  "occasion": "office day with a client meeting",
+  "target_formality": 4,
+  "suggestions": [
+   {
+    "rank": 1,
+    "name": "Rust and Charcoal, Coat Weather",
+    "item_ids": [
+     "top-003",
+     "bottom-002",
+     "outer-001",
+     "shoes-002",
+     "accessory-001"
+    ],
+    "items": [
+     {
+      "id": "top-003",
+      "category": "top",
+      "subcategory": "ribbed turtleneck",
+      "colors": [
+       "rust"
+      ],
+      "pattern": "solid",
+      "fabric": "merino wool",
+      "warmth": 4,
+      "formality": 3,
+      "condition": "excellent",
+      "date_added": "2025-10-18",
+      "last_worn": "2026-03-02",
+      "notes": "The only strong colour in the closet.",
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "bottom-002",
+      "category": "bottom",
+      "subcategory": "tailored trousers",
+      "colors": [
+       "charcoal"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 3,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-02-14",
+      "last_worn": "2026-06-11",
+      "notes": null,
+      "tags": [
+       "workwear"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "outer-001",
+      "category": "outer",
+      "subcategory": "overcoat",
+      "colors": [
+       "camel"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 4,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2024-11-08",
+      "last_worn": "2026-02-27",
+      "notes": null,
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "shoes-002",
+      "category": "shoes",
+      "subcategory": "chelsea boots",
+      "colors": [
+       "brown"
+      ],
+      "pattern": "solid",
+      "fabric": "suede",
+      "warmth": 3,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-10-11",
+      "last_worn": "2026-04-08",
+      "notes": null,
+      "tags": [
+       "autumn",
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "accessory-001",
+      "category": "accessory",
+      "subcategory": "scarf",
+      "colors": [
+       "charcoal"
+      ],
+      "pattern": "solid",
+      "fabric": "merino wool",
+      "warmth": 4,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-11-08",
+      "last_worn": "2026-02-27",
+      "notes": null,
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     }
+    ],
+    "rationale": "The merino turtleneck is the one piece in this closet actually built for 6C, and a fine-gauge knit under a tailored overcoat reads as deliberate rather than underdressed in a client meeting. Rust against charcoal is the cleanest contrast available here \ninstead of fighting, the warm red-brown sits on top of a neutral and the camel coat bridges the two. The brown suede chelseas pick up the same warm tone as the knit, which keeps the whole thing from splitting into 'warm top, cold bottom'. Charcoal scarf ties back to the trousers and keeps the colour story to two families. No pattern anywhere, so the single strong colour does all the work.",
+    "weather_fit": "Warmth 4 knit plus warmth 4 wool coat and scarf covers the cold end of 6C with wind; the suede boots are rated for cool and precipitation risk is only 10%, so no rain worry.",
+    "formality": 4,
+    "confidence": 0.88
+   },
+   {
+    "rank": 2,
+    "name": "The Straight Business Answer",
+    "item_ids": [
+     "top-001",
+     "bottom-002",
+     "outer-001",
+     "shoes-003",
+     "accessory-001"
+    ],
+    "items": [
+     {
+      "id": "top-001",
+      "category": "top",
+      "subcategory": "oxford shirt",
+      "colors": [
+       "white"
+      ],
+      "pattern": "solid",
+      "fabric": "cotton",
+      "warmth": 2,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-03-12",
+      "last_worn": "2026-08-24",
+      "notes": "Workhorse shirt, slightly softened collar.",
+      "tags": [
+       "workwear",
+       "layerable"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "bottom-002",
+      "category": "bottom",
+      "subcategory": "tailored trousers",
+      "colors": [
+       "charcoal"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 3,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-02-14",
+      "last_worn": "2026-06-11",
+      "notes": null,
+      "tags": [
+       "workwear"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "outer-001",
+      "category": "outer",
+      "subcategory": "overcoat",
+      "colors": [
+       "camel"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 4,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2024-11-08",
+      "last_worn": "2026-02-27",
+      "notes": null,
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "shoes-003",
+      "category": "shoes",
+      "subcategory": "derby shoes",
+      "colors": [
+       "black"
+      ],
+      "pattern": "solid",
+      "fabric": "leather",
+      "warmth": 2,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-02-14",
+      "last_worn": "2026-06-11",
+      "notes": null,
+      "tags": [
+       "formal",
+       "work"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "accessory-001",
+      "category": "accessory",
+      "subcategory": "scarf",
+      "colors": [
+       "charcoal"
+      ],
+      "pattern": "solid",
+      "fabric": "merino wool",
+      "warmth": 4,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-11-08",
+      "last_worn": "2026-02-27",
+      "notes": null,
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     }
+    ],
+    "rationale": "If the client meeting is the formal kind, this is the most orthodox combination the closet holds: charcoal wool trousers and black leather derbies are both rated business, and the white oxford gives the crisp collar a turtleneck can't. The oxford is only warmth 2, but it is a layer under a warmth-4 overcoat and indoors in a heated office that's exactly right. Camel over charcoal and white is a classic three-tone neutral run; the charcoal scarf repeats the trouser colour at the neck rather than introducing a fourth note. The one weak link is the softened collar on the shirt \ncheck it sits properly before you leave.",
+    "weather_fit": "Relies entirely on the overcoat and scarf for insulation; fine for a door-to-door commute but you'll feel the 8kph wind if you linger outside. Black leather handles damp better than suede.",
+    "formality": 4,
+    "confidence": 0.8
+   },
+   {
+    "rank": 3,
+    "name": "Sheath and Overcoat",
+    "item_ids": [
+     "dress-001",
+     "outer-001",
+     "shoes-003",
+     "accessory-001"
+    ],
+    "items": [
+     {
+      "id": "dress-001",
+      "category": "dress",
+      "subcategory": "sheath dress",
+      "colors": [
+       "black"
+      ],
+      "pattern": "solid",
+      "fabric": "wool crepe",
+      "warmth": 2,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-04-30",
+      "last_worn": "2026-05-16",
+      "notes": null,
+      "tags": [
+       "work",
+       "evening"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "outer-001",
+      "category": "outer",
+      "subcategory": "overcoat",
+      "colors": [
+       "camel"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 4,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2024-11-08",
+      "last_worn": "2026-02-27",
+      "notes": null,
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "shoes-003",
+      "category": "shoes",
+      "subcategory": "derby shoes",
+      "colors": [
+       "black"
+      ],
+      "pattern": "solid",
+      "fabric": "leather",
+      "warmth": 2,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-02-14",
+      "last_worn": "2026-06-11",
+      "notes": null,
+      "tags": [
+       "formal",
+       "work"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "accessory-001",
+      "category": "accessory",
+      "subcategory": "scarf",
+      "colors": [
+       "charcoal"
+      ],
+      "pattern": "solid",
+      "fabric": "merino wool",
+      "warmth": 4,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-11-08",
+      "last_worn": "2026-02-27",
+      "notes": null,
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     }
+    ],
+    "rationale": "The black wool-crepe sheath is the only genuinely formality-4 garment here, so it meets the client brief head-on without needing to be propped up. Black and camel is the most flattering pairing the overcoat has \nthe coat's warmth lifts the flat black, and the derbies keep the line long and sharp rather than prettying it up. Charcoal scarf softens the hard black-on-camel edge at the collar. Note that this is the lowest-warmth option by some distance: the dress is rated mild and there are no tights or boots listed to fix the leg, so it only works if you're going office-to-taxi-to-meeting.",
+    "weather_fit": "Weakest of the three for 6C. Wool crepe plus the overcoat handles the torso, but bare legs in 8kph wind at the cold end of the range is a real compromise, not a styling choice.",
+    "formality": 4,
+    "confidence": 0.62
+   }
+  ],
+  "overall_notes": "This closet covers the formality but is thin on mid-layers \nthere's no blazer, cardigan or suit jacket, so the camel overcoat is doing every bit of the dressy-and-warm work. The other two outers rule themselves out: the trucker jacket is casual and fading at the cuffs, and the green/black check overshirt is both too casual and the only pattern in the room, which would fight a client meeting. Charcoal trousers are the only business-grade bottom, so the real decision today is turtleneck versus oxford versus the sheath. The indigo jeans and olive chinos can't reach formality 4 and are also too light for the temperature.",
+  "warnings": [],
+  "model": "claude-opus-5"
+ },
+ "error": null
+}

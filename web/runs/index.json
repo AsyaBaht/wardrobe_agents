@@ -1,0 +1,12 @@
+{
+ "closet": "seed-closet.json",
+ "recommend": [
+  "office.json",
+  "rain.json",
+  "weekend.json",
+  "dinner.json"
+ ],
+ "suggest_buy": [
+  "suggest-buy.json"
+ ]
+}
