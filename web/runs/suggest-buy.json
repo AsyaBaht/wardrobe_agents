@@ -1,0 +1,260 @@
+{
+ "id": "suggest-buy",
+ "stage": "suggest-buy",
+ "order": 1,
+ "sample": false,
+ "label": "What to buy next",
+ "generated_at": "2026-10-25T19:19:56+00:00",
+ "blurb": "7 candidate purchases ranked against the seed closet.",
+ "report": {
+  "run_id": "20261025T141956-suggest-buy",
+  "stage": "suggest-buy",
+  "created_at": "2026-10-25T14:19:56.202484",
+  "closet_path": "examples/seed_closet/closet.json",
+  "candidates_path": "examples/candidate_purchases.json",
+  "stats": {
+   "item_count": 15,
+   "by_category": {
+    "top": 4,
+    "bottom": 3,
+    "dress": 1,
+    "outer": 3,
+    "shoes": 3,
+    "accessory": 1
+   },
+   "compatible_pair_count": 79,
+   "total_pair_count": 105,
+   "outfit_count": 128,
+   "distinct_look_count": 128,
+   "outfit_count_truncated": false
+  },
+  "recommendations": [
+   {
+    "rank": 1,
+    "candidate": {
+     "candidate_id": "cand-003",
+     "category": "bottom",
+     "subcategory": "wide-leg trousers",
+     "colors": [
+      "burgundy"
+     ],
+     "pattern": "solid",
+     "fabric": "wool",
+     "warmth": 3,
+     "formality": 4,
+     "price": 145.0,
+     "url": null,
+     "notes": "Colour in a slot that currently has none."
+    },
+    "baseline_outfit_count": 128,
+    "new_outfit_count": 40,
+    "new_combination_count": 40,
+    "total_outfit_count": 168,
+    "marginal_gain_pct": 31.25,
+    "bridged_pairs": [],
+    "top_partners": [
+     "shoes-003",
+     "shoes-002",
+     "top-001"
+    ],
+    "redundant_with": [],
+    "verdict": "recommended",
+    "explanation": "Unlocks 40 new looks (+31% on the 128 your closet supports today). It leans most on your black derby shoes, brown chelsea boots, white oxford shirt."
+   },
+   {
+    "rank": 2,
+    "candidate": {
+     "candidate_id": "cand-001",
+     "category": "top",
+     "subcategory": "crewneck sweater",
+     "colors": [
+      "cream"
+     ],
+     "pattern": "solid",
+     "fabric": "merino wool",
+     "warmth": 3,
+     "formality": 3,
+     "price": 120.0,
+     "url": null,
+     "notes": "Mid-weight neutral knit - the layer between a shirt and a coat."
+    },
+    "baseline_outfit_count": 128,
+    "new_outfit_count": 36,
+    "new_combination_count": 36,
+    "total_outfit_count": 164,
+    "marginal_gain_pct": 28.12,
+    "bridged_pairs": [],
+    "top_partners": [
+     "bottom-003",
+     "shoes-002",
+     "bottom-001"
+    ],
+    "redundant_with": [
+     "top-001"
+    ],
+    "verdict": "recommended",
+    "explanation": "Unlocks 36 new looks (+28% on the 128 your closet supports today). It leans most on your olive chinos, brown chelsea boots, indigo straight jeans. Caveat: it overlaps with the white oxford shirt you already own."
+   },
+   {
+    "rank": 3,
+    "candidate": {
+     "candidate_id": "cand-005",
+     "category": "top",
+     "subcategory": "camp collar shirt",
+     "colors": [
+      "white"
+     ],
+     "pattern": "solid",
+     "fabric": "linen",
+     "warmth": 1,
+     "formality": 3,
+     "price": 85.0,
+     "url": null,
+     "notes": "Hot-weather cover for a closet that thins out above 25C."
+    },
+    "baseline_outfit_count": 128,
+    "new_outfit_count": 36,
+    "new_combination_count": 36,
+    "total_outfit_count": 164,
+    "marginal_gain_pct": 28.12,
+    "bridged_pairs": [],
+    "top_partners": [
+     "bottom-003",
+     "shoes-002",
+     "bottom-001"
+    ],
+    "redundant_with": [
+     "top-001",
+     "top-002"
+    ],
+    "verdict": "recommended",
+    "explanation": "Unlocks 36 new looks (+28% on the 128 your closet supports today). It leans most on your olive chinos, brown chelsea boots, indigo straight jeans. Caveat: it overlaps with the white oxford shirt, navy/white striped breton tee you already own."
+   },
+   {
+    "rank": 4,
+    "candidate": {
+     "candidate_id": "cand-006",
+     "category": "outer",
+     "subcategory": "unstructured blazer",
+     "colors": [
+      "navy"
+     ],
+     "pattern": "solid",
+     "fabric": "wool",
+     "warmth": 3,
+     "formality": 4,
+     "price": 260.0,
+     "url": null,
+     "notes": "Dressy outer layer lighter than the overcoat."
+    },
+    "baseline_outfit_count": 128,
+    "new_outfit_count": 34,
+    "new_combination_count": 34,
+    "total_outfit_count": 162,
+    "marginal_gain_pct": 26.56,
+    "bridged_pairs": [],
+    "top_partners": [
+     "shoes-003",
+     "shoes-002",
+     "bottom-002"
+    ],
+    "redundant_with": [
+     "outer-001"
+    ],
+    "verdict": "recommended",
+    "explanation": "Unlocks 34 new looks (+27% on the 128 your closet supports today). It leans most on your black derby shoes, brown chelsea boots, charcoal tailored trousers. Caveat: it overlaps with the camel overcoat you already own."
+   },
+   {
+    "rank": 5,
+    "candidate": {
+     "candidate_id": "cand-002",
+     "category": "bottom",
+     "subcategory": "straight jeans",
+     "colors": [
+      "indigo"
+     ],
+     "pattern": "solid",
+     "fabric": "denim",
+     "warmth": 2,
+     "formality": 2,
+     "price": 90.0,
+     "url": null,
+     "notes": "A second pair of the jeans already in the closet."
+    },
+    "baseline_outfit_count": 128,
+    "new_outfit_count": 0,
+    "new_combination_count": 36,
+    "total_outfit_count": 128,
+    "marginal_gain_pct": 0.0,
+    "bridged_pairs": [],
+    "top_partners": [],
+    "redundant_with": [
+     "bottom-001",
+     "bottom-003"
+    ],
+    "verdict": "redundant",
+    "explanation": "No new looks. It slots into 36 combinations, but every one of them is a look you can already assemble from what you own. It duplicates your indigo straight jeans."
+   },
+   {
+    "rank": 6,
+    "candidate": {
+     "candidate_id": "cand-004",
+     "category": "shoes",
+     "subcategory": "loafers",
+     "colors": [
+      "brown"
+     ],
+     "pattern": "solid",
+     "fabric": "suede",
+     "warmth": 3,
+     "formality": 3,
+     "price": 180.0,
+     "url": null,
+     "notes": "Very close to the chelsea boots already owned."
+    },
+    "baseline_outfit_count": 128,
+    "new_outfit_count": 0,
+    "new_combination_count": 44,
+    "total_outfit_count": 128,
+    "marginal_gain_pct": 0.0,
+    "bridged_pairs": [],
+    "top_partners": [],
+    "redundant_with": [
+     "shoes-002",
+     "shoes-003"
+    ],
+    "verdict": "redundant",
+    "explanation": "No new looks. It slots into 44 combinations, but every one of them is a look you can already assemble from what you own. It duplicates your brown chelsea boots."
+   },
+   {
+    "rank": 7,
+    "candidate": {
+     "candidate_id": "cand-007",
+     "category": "accessory",
+     "subcategory": "silk scarf",
+     "colors": [
+      "mustard"
+     ],
+     "pattern": "print",
+     "fabric": "silk",
+     "warmth": 1,
+     "formality": 3,
+     "price": 65.0,
+     "url": null,
+     "notes": "Included to show how accessories are handled."
+    },
+    "baseline_outfit_count": 128,
+    "new_outfit_count": 0,
+    "new_combination_count": 0,
+    "total_outfit_count": 128,
+    "marginal_gain_pct": 0.0,
+    "bridged_pairs": [],
+    "top_partners": [],
+    "redundant_with": [],
+    "verdict": "not_scored",
+    "explanation": "Accessories are not counted in outfit enumeration, so this candidate has no marginal outfit score. Judge it on styling, not coverage."
+   }
+  ],
+  "marginal_gain_threshold": 3
+ }
+}

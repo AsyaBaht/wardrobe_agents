@@ -24,6 +24,13 @@ SEED_CLOSET = REPO_ROOT / "examples" / "seed_closet" / "closet.json"
 SEED_CANDIDATES = REPO_ROOT / "examples" / "candidate_purchases.json"
 
 
+@pytest.fixture(autouse=True)
+def _no_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Hide any key a developer's .env put in the environment, so no test can
+    reach the real API by accident. Tests that need a model inject a fake one."""
+    monkeypatch.delenv(Settings().api_key_env_var, raising=False)
+
+
 @pytest.fixture
 def make_item() -> Callable[..., ClosetItem]:
     """Build a ClosetItem with sensible defaults; override what the test cares about."""

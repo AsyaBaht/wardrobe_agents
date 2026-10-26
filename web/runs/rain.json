@@ -1,0 +1,433 @@
+{
+ "id": "rain",
+ "stage": "recommend",
+ "order": 2,
+ "sample": false,
+ "label": "Rainy commute",
+ "blurb": "Steady rain and a breeze. The closet has no waterproof layer, and the guard says so.",
+ "generated_at": "2026-10-25T22:50:29+00:00",
+ "inputs": {
+  "occasion": "commute to the office",
+  "formality": 3
+ },
+ "forecast": {
+  "date": "2026-10-29",
+  "location": "London, UK",
+  "temp_min_c": 9.0,
+  "temp_max_c": 13.0,
+  "precipitation_mm": 6.0,
+  "precipitation_probability_pct": 85,
+  "wind_kph": 24.0,
+  "weather_code": 63,
+  "conditions": "moderate rain"
+ },
+ "ambiguous": true,
+ "rules_constraints": {
+  "date": "2026-10-29",
+  "location": "London, UK",
+  "temp_min_c": 9.0,
+  "temp_max_c": 13.0,
+  "temp_band": "cool",
+  "precipitation_mm": 6.0,
+  "precipitation_probability_pct": 85,
+  "wind_kph": 24.0,
+  "conditions": "moderate rain",
+  "min_warmth": 3,
+  "max_warmth": 3,
+  "needs_waterproof_outer": true,
+  "needs_windproof": false,
+  "prefer_fabrics": [
+   "wool",
+   "denim",
+   "cotton"
+  ],
+  "avoid_fabrics": [
+   "linen"
+  ],
+  "layering_advice": "Steady temperatures; a single layer plus an optional light outer works.",
+  "notes": "",
+  "source": "rules"
+ },
+ "model_calls": [
+  "translating the forecast into clothing constraints",
+  "choosing outfits from the closet"
+ ],
+ "report": {
+  "run_id": "20261025T175029-recommend",
+  "stage": "recommend",
+  "created_at": "2026-10-25T17:50:29.140574",
+  "closet_path": "examples/seed_closet/closet.json",
+  "closet_item_count": 15,
+  "constraints": {
+   "date": "2026-10-29",
+   "location": "London, UK",
+   "temp_min_c": 9.0,
+   "temp_max_c": 13.0,
+   "temp_band": "cool",
+   "precipitation_mm": 6.0,
+   "precipitation_probability_pct": 85,
+   "wind_kph": 24.0,
+   "conditions": "moderate rain",
+   "min_warmth": 3,
+   "max_warmth": 3,
+   "needs_waterproof_outer": true,
+   "needs_windproof": true,
+   "prefer_fabrics": [
+    "merino wool",
+    "fleece",
+    "synthetic quick-dry",
+    "nylon/polyester shell with taped seams",
+    "waterproof leather or rubber footwear"
+   ],
+   "avoid_fabrics": [
+    "cotton",
+    "denim",
+    "down",
+    "suede",
+    "canvas sneakers"
+   ],
+   "layering_advice": "Merino or synthetic base, light fleece or wool mid-layer, then a properly taped rain shell on top. The 4-degree swing is small enough that you'll likely keep all three on; just unzip the shell if you warm up between showers.",
+   "notes": "Rain is steady rather than showery, and at 24 kph an umbrella will be awkward and leave your legs and shoulders soaked - commit to a hood. The shell is doing the wind-chill work here, so the base layers stay at cool-band weight; drop the mid-layer if you're moving fast. Waterproof shoes matter more than the jacket on London pavements with this much accumulation, and bring a spare pair of socks if you're out all day.",
+   "source": "rules+llm"
+  },
+  "occasion": "commute to the office",
+  "target_formality": 3,
+  "suggestions": [
+   {
+    "rank": 1,
+    "name": "Rust Under Camel",
+    "item_ids": [
+     "top-003",
+     "bottom-002",
+     "outer-001",
+     "shoes-003",
+     "accessory-001"
+    ],
+    "items": [
+     {
+      "id": "top-003",
+      "category": "top",
+      "subcategory": "ribbed turtleneck",
+      "colors": [
+       "rust"
+      ],
+      "pattern": "solid",
+      "fabric": "merino wool",
+      "warmth": 4,
+      "formality": 3,
+      "condition": "excellent",
+      "date_added": "2025-10-18",
+      "last_worn": "2026-03-02",
+      "notes": "The only strong colour in the closet.",
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "bottom-002",
+      "category": "bottom",
+      "subcategory": "tailored trousers",
+      "colors": [
+       "charcoal"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 3,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-02-14",
+      "last_worn": "2026-06-11",
+      "notes": null,
+      "tags": [
+       "workwear"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "outer-001",
+      "category": "outer",
+      "subcategory": "overcoat",
+      "colors": [
+       "camel"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 4,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2024-11-08",
+      "last_worn": "2026-02-27",
+      "notes": null,
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "shoes-003",
+      "category": "shoes",
+      "subcategory": "derby shoes",
+      "colors": [
+       "black"
+      ],
+      "pattern": "solid",
+      "fabric": "leather",
+      "warmth": 2,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-02-14",
+      "last_worn": "2026-06-11",
+      "notes": null,
+      "tags": [
+       "formal",
+       "work"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "accessory-001",
+      "category": "accessory",
+      "subcategory": "scarf",
+      "colors": [
+       "charcoal"
+      ],
+      "pattern": "solid",
+      "fabric": "merino wool",
+      "warmth": 4,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-11-08",
+      "last_worn": "2026-02-27",
+      "notes": null,
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     }
+    ],
+    "rationale": "The rust merino turtleneck is the only saturated colour you own, and it sits inside the camel overcoat like a warmer version of the same family - tan outside, burnt orange inside, with the charcoal trousers grounding both so the warm tones read deliberate rather than muddy. The charcoal scarf repeats the trouser colour at the neckline and keeps the camel from washing you out. Black derbies are the only non-suede shoe here, so they're doing double duty: they're the right formality for a desk day and the only leather that will survive standing water. Turtleneck means no shirt collar to fuss with under a coat, which is the right call when you'll be taking the coat on and off between platform and office.",
+    "weather_fit": "Honest version: the camel wool is warm and cuts some wind, but it is not waterproof and wool overcoats hold rain weight badly - this works if your commute is mostly indoors/underground with short exposed stretches. The turtleneck is rated a step above today's window, which is fine at 9C with 24 kph wind-chill; if the office is overheated, the coat comes off and the merino alone is comfortable. Leather derbies beat suede on wet pavement but want a wipe-down and a spare pair of socks.",
+    "formality": 3,
+    "confidence": 0.62
+   },
+   {
+    "rank": 2,
+    "name": "Flannel Check Over Crisp White",
+    "item_ids": [
+     "top-001",
+     "bottom-002",
+     "outer-003",
+     "shoes-003"
+    ],
+    "items": [
+     {
+      "id": "top-001",
+      "category": "top",
+      "subcategory": "oxford shirt",
+      "colors": [
+       "white"
+      ],
+      "pattern": "solid",
+      "fabric": "cotton",
+      "warmth": 2,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-03-12",
+      "last_worn": "2026-08-24",
+      "notes": "Workhorse shirt, slightly softened collar.",
+      "tags": [
+       "workwear",
+       "layerable"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "bottom-002",
+      "category": "bottom",
+      "subcategory": "tailored trousers",
+      "colors": [
+       "charcoal"
+      ],
+      "pattern": "solid",
+      "fabric": "wool",
+      "warmth": 3,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-02-14",
+      "last_worn": "2026-06-11",
+      "notes": null,
+      "tags": [
+       "workwear"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "outer-003",
+      "category": "outer",
+      "subcategory": "overshirt",
+      "colors": [
+       "green",
+       "black"
+      ],
+      "pattern": "check",
+      "fabric": "wool flannel",
+      "warmth": 3,
+      "formality": 2,
+      "condition": "good",
+      "date_added": "2025-09-22",
+      "last_worn": "2026-04-08",
+      "notes": "The only patterned outer layer.",
+      "tags": [
+       "autumn"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "shoes-003",
+      "category": "shoes",
+      "subcategory": "derby shoes",
+      "colors": [
+       "black"
+      ],
+      "pattern": "solid",
+      "fabric": "leather",
+      "warmth": 2,
+      "formality": 4,
+      "condition": "excellent",
+      "date_added": "2025-02-14",
+      "last_worn": "2026-06-11",
+      "notes": null,
+      "tags": [
+       "formal",
+       "work"
+      ],
+      "source": "seed",
+      "photo_path": null
+     }
+    ],
+    "rationale": "A completely different silhouette: instead of a long coat, the green/black check overshirt worn as the outer layer over the white oxford. The white collar and cuffs breaking out of the dark check is the whole point of the look - it stops the flannel reading as a weekend shirt and keeps the formality at smart casual. Charcoal wool trousers are the neutral that lets the only patterned piece in the closet speak; olive chinos under the green check would be tone-on-tone sludge. Black derbies pick up the black in the check and pull the outfit back toward office-appropriate.",
+    "weather_fit": "The weakest point is the cotton oxford, which today's conditions specifically argue against - but it's buried under wool flannel and only exposed at collar and cuff, so it stays dry if you move quickly between cover. Wool flannel sheds light rain for a while and blocks wind decently, though it has no hood and will saturate in steady rain. Shorter, faster commutes only; this is not an outfit for a long walk.",
+    "formality": 3,
+    "confidence": 0.45
+   },
+   {
+    "rank": 3,
+    "name": "Autumn Off-Duty",
+    "item_ids": [
+     "top-003",
+     "bottom-003",
+     "outer-003",
+     "shoes-002"
+    ],
+    "items": [
+     {
+      "id": "top-003",
+      "category": "top",
+      "subcategory": "ribbed turtleneck",
+      "colors": [
+       "rust"
+      ],
+      "pattern": "solid",
+      "fabric": "merino wool",
+      "warmth": 4,
+      "formality": 3,
+      "condition": "excellent",
+      "date_added": "2025-10-18",
+      "last_worn": "2026-03-02",
+      "notes": "The only strong colour in the closet.",
+      "tags": [
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "bottom-003",
+      "category": "bottom",
+      "subcategory": "chinos",
+      "colors": [
+       "olive"
+      ],
+      "pattern": "solid",
+      "fabric": "cotton",
+      "warmth": 2,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-09-05",
+      "last_worn": "2026-08-20",
+      "notes": null,
+      "tags": [
+       "everyday"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "outer-003",
+      "category": "outer",
+      "subcategory": "overshirt",
+      "colors": [
+       "green",
+       "black"
+      ],
+      "pattern": "check",
+      "fabric": "wool flannel",
+      "warmth": 3,
+      "formality": 2,
+      "condition": "good",
+      "date_added": "2025-09-22",
+      "last_worn": "2026-04-08",
+      "notes": "The only patterned outer layer.",
+      "tags": [
+       "autumn"
+      ],
+      "source": "seed",
+      "photo_path": null
+     },
+     {
+      "id": "shoes-002",
+      "category": "shoes",
+      "subcategory": "chelsea boots",
+      "colors": [
+       "brown"
+      ],
+      "pattern": "solid",
+      "fabric": "suede",
+      "warmth": 3,
+      "formality": 3,
+      "condition": "good",
+      "date_added": "2024-10-11",
+      "last_worn": "2026-04-08",
+      "notes": null,
+      "tags": [
+       "autumn",
+       "winter"
+      ],
+      "source": "seed",
+      "photo_path": null
+     }
+    ],
+    "rationale": "The casual end of what the closet can do: rust merino against the green/black check is the classic autumn complementary pairing - red-orange opposite green - and the olive chinos bridge the two by echoing the check's green at a lower saturation. The brown suede chelseas pick up the warm tone in the rust knit and finish it properly. This is the best-looking outfit of the three on a dry day; it reads relaxed-creative rather than office-formal, so it only fits if your workplace runs loose.",
+    "weather_fit": "Poor, and I won't pretend otherwise. Suede is explicitly the wrong material today - 85% precipitation will stain and stiffen it, and cotton chinos soak and stay cold against the leg in 24 kph wind. The merino turtleneck and flannel overshirt are the two sound pieces. Take this only if you're driven door to door.",
+    "formality": 2,
+    "confidence": 0.28
+   }
+  ],
+  "overall_notes": "Plainly: this closet cannot meet today's brief. There is no waterproof or taped-seam outer layer at all, no hood, and no rubber or treated-leather footwear - the three things the forecast says matter most. Every option above is a compromise on rain protection, not a solution. The practical move is to wear outfit one and borrow or buy a packable rain shell to go over the camel coat (or instead of it), and to keep the suede chelseas in the cupboard entirely until the pavements dry. Also missing: a merino or synthetic base layer, which would let you drop a bulky mid-layer and handle the 4-degree swing properly. The black sheath dress is unusable today - bare legs in 9C, steady rain and 24 kph wind is a non-starter, and there are no tights or waterproof boots to rescue it.",
+  "warnings": [
+   "The forecast calls for a waterproof outer layer, but no outer item is tagged 'waterproof' - tag one in the closet if you own it.",
+   "The forecast calls for a windproof outer layer, but no outer item is tagged 'windproof' - tag one in the closet if you own it."
+  ],
+  "model": "claude-opus-5"
+ },
+ "error": null
+}

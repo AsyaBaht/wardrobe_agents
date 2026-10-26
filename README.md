@@ -18,8 +18,14 @@ is the closet dataset and the schemas that describe it.
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"          # add ",yaml" if you want to write closets in YAML
-export ANTHROPIC_API_KEY=sk-...  # only needed for the LLM-backed paths
+cp .env.example .env             # then paste your key into .env
 ```
+
+The key is only needed for the LLM-backed paths (see below). `config/settings.py` loads `.env` from
+the repo root on import, so it works from any directory. `.env` is git-ignored; `.env.example` is
+the committed template and also lists the optional `WARDROBE_*` overrides. A variable already set in
+your shell wins over `.env`, so `export ANTHROPIC_API_KEY=...` still works too. Tests never use the
+key: a fixture removes it from the environment for every test.
 
 Verify the install without spending a token — stage 2 needs no key, no network, and no state:
 
@@ -76,7 +82,7 @@ phone is only a browser.
 
 ```bash
 pip install -e ".[web]"         # FastAPI + uvicorn, not needed for the CLI
-export ANTHROPIC_API_KEY=sk-...
+                                # the key comes from .env (see Setup)
 wardrobe serve --lan            # prints the address to open on your phone
 ```
 

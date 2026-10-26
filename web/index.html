@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f4f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16171a" media="(prefers-color-scheme: dark)">
+<title>Wardrobe Agents</title>
+<meta name="description" content="Saved runs of two pipelines over one closet: agents that pick today's outfits, and a purchase optimizer that ranks what to buy by the new looks it unlocks.">
+<link rel="stylesheet" href="styles.css?v=10">
+</head>
+<body>
+<main>
+  <header class="intro">
+    <a class="back" href="../projects.html">&larr; All projects</a>
+    <p class="eyebrow">Wardrobe Agents · demo</p>
+    <p class="lede">Saved runs over a 15-item demo closet. Nothing on this page calls an API.</p>
+    <details class="how">
+      <summary>How it works</summary>
+      <p><b>What to wear</b> is three agents. A weather agent turns the forecast into typed constraints with rules, and asks Claude only when the day is ambiguous. A stylist (Claude) picks outfits from the closet. Code then checks every pick: ids must be real, an outfit needs one top and one bottom or one dress, and a wet day needs a waterproof layer. Dropped picks are kept as warnings.</p>
+      <p><b>What to buy</b> uses no model. Every pair of items is scored by rules, every valid outfit is enumerated, and each candidate is ranked by the <i>new looks</i> it adds, not by raw combinations. A second pair of the same jeans makes 36 combinations and zero new looks.</p>
+    </details>
+  </header>
+
+  <!-- Today -->
+  <section id="tab-today">
+    <h1>What to wear</h1>
+    <div class="runs" id="run-list" role="group" aria-label="Saved runs"></div>
+    <div id="sample-flag" class="notice warn hidden" role="note">Sample data, written by hand to test the layout. It is not agent output.</div>
+    <div class="split">
+      <div id="rec-weather"></div>
+      <div id="rec-out"><p class="muted">Loading saved runs…</p></div>
+      <div id="rec-about"></div>
+    </div>
+  </section>
+
+  <!-- Closet -->
+  <section id="tab-closet" class="hidden">
+    <h1>Closet</h1>
+    <p class="muted">The 15-item demo closet both stages run on. Each piece is drawn from its colour and pattern; with photos, the real app shows those instead.</p>
+    <div id="closet-out"></div>
+  </section>
+
+  <!-- Buy -->
+  <section id="tab-buy" class="hidden">
+    <h1>What to buy next</h1>
+    <div id="buy-out"></div>
+  </section>
+</main>
+
+<nav role="tablist" aria-label="Sections">
+  <button role="tab" data-tab="today" aria-selected="true">Today</button>
+  <button role="tab" data-tab="closet" aria-selected="false">Closet</button>
+  <button role="tab" data-tab="buy" aria-selected="false">Buy next</button>
+</nav>
+
+<script src="app.js?v=10"></script>
+</body>
+</html>

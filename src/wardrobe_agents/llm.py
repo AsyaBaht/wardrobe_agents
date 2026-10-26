@@ -134,8 +134,9 @@ class StructuredLLM:
     def require_configured(self, what: str) -> None:
         if not self.is_configured():
             raise MissingAPIKeyError(
-                f"{what} needs the Claude API. Set {self.settings.api_key_env_var} in your "
-                "environment (or run `ant auth login`) and try again."
+                f"{what} needs the Claude API. Copy .env.example to .env and add your key, "
+                f"or set {self.settings.api_key_env_var} in your environment (or run "
+                "`ant auth login`), and try again."
             )
 
     @property
@@ -143,7 +144,8 @@ class StructuredLLM:
         if self._client is None:
             if self.settings.api_key() is None:
                 raise MissingAPIKeyError(
-                    f"No Claude API key found. Set {self.settings.api_key_env_var} in your environment."
+                    f"No Claude API key found. Copy .env.example to .env and add your key, "
+                    f"or set {self.settings.api_key_env_var} in your environment."
                 )
             self._client = anthropic.Anthropic(timeout=self.settings.llm_timeout_seconds)
         return self._client
